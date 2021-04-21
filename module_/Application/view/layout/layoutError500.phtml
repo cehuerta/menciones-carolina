@@ -1,0 +1,59 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('ERROR')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php $r=mt_rand(1,50); ?>
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath().'/img/logo/logo.png?r='.$r ))
+                        ->prependStylesheet($this->basePath() . '/plugins/pace/pace.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/demo/nifty-demo.min.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/font-awesome/css/font-awesome.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/themes/type-c/theme-dark.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/nifty.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+                        ->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin')
+                        ; ?>
+                         
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath() . '/js/demo/bg-images.js')
+            ->prependFile($this->basePath() . '/js/nifty.min.js')
+            ->prependFile($this->basePath() . '/plugins/fast-click/fastclick.min.js')
+            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+            ->prependFile($this->basePath() . '/js/jquery-2.1.1.min.js')
+            ->prependFile($this->basePath() . '/plugins/pace/pace.min.js')
+        ; ?>
+
+    </head>
+    <body>
+        <div id="container" class="cls-container">
+            <!-- HEADER -->
+            <!--===================================================-->
+            <div class="cls-header">
+                <div class="cls-brand">
+                    <a class="box-inline" href="">
+                        <span class="brand-title">ADMINISTRADOR DE MENCIONES<span class="text-thin"></span></span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- CONTENT -->
+            <!--===================================================-->
+            <div class="cls-content">
+                <h1 class="error-code text-danger">500</h1>
+                <?php echo $this->content; ?>
+            </div>
+            
+            <div class="pad-top"><a class="btn btn-danger" href="<?php echo $this->url('login'); ?>"><i class="fa fa-arrow-left"></i> Regresar</a></div>
+        </div>
+
+    </body>
+</html>

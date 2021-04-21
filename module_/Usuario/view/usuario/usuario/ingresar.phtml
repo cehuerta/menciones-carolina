@@ -1,0 +1,287 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+?>
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+
+		$('#alertaMSJ').delay(2500).slideToggle(2500);
+
+	});
+
+</script>
+
+
+<?php
+    $flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+<?php echo $flash->render('msjError',array('alert', 'alert-danger'));?>
+
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">USUARIOS</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li><a href="<?=$this->url("adms").$this->queryGET; ?>">Usuarios</a></li>
+    <li>Nuevo</li>
+    <a class="btn btn-default btn-sm pull-right" href="<?=$this->url("adms").$this->queryGET; ?>"><i class="fa fa-arrow-left"></i> Volver</a>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+
+	<div class="panel">
+        <div class="panel-heading">
+            <div class="panel-control">
+            </div>
+            <h3 class="panel-title">Nuevo Usuario</h3>
+        </div>
+
+        <!-- ICON CARGANDO -->
+        <div class="panel-alert">
+            <div id="imgCargando" class="alert-wrap in"></div>
+        </div>
+        <!-- /.FIN ICON CARGANDO -->
+
+        <div class="panel-body">
+
+			<form role="form" name="guardarUsuario" id="guardarUsuario" action="<?php echo $this->url("saveajaxusuario") ?>" method="POST" enctype="multipart/form-data">
+				<div class="row">
+					<div class="col-md-5 border-right">
+				        
+
+						<br />
+						<div class="form-group">
+							<label class="text-semibold">Nombre completo <span class="label-required">*</span> </label>
+							<input type="text" maxlength="200" name="nombreUsuario" id="nombreUsuario" class="form-control" required />
+						</div>
+
+						<div class="form-group">
+							<label class="text-semibold">Slug <span class="label-required">*</span></label>
+							<input type="text" maxlength="200" name="slugUser" id="slugUser" class="form-control" required />
+						</div>
+
+						<div class="form-group">
+							<label class="text-semibold">Correo <span class="label-required">*</span></label>
+							<input type="email" maxlength="200" name="correoUsuario" id="correoUsuario" class="form-control" required />
+						</div>
+
+						<div class="form-group">
+				            <label class="text-semibold">Contraseña <span class="label-required">*</span></label>
+				            <input type="password" maxlength="100" name="passUsuario" id="passUsuario" class="form-control" required />
+				        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+        				        <div class="form-group">
+        				            <label class="text-semibold">Imagen <span class="label-required">*</span> </label>
+        				            <input type="file" name="image" id="image" accept=".jpg, .png, .jpeg" class="form-control" required />
+        				            <em>.png, .jpg, .jpeg</em>
+        				        </div> 
+                            </div>
+                            <div class="col-md-4 text-center pad-top">
+                                <img src="<?php echo $this->basePath().'/img/'.$this->NoImage; ?>" alt="Preview" class="img-circle img-md img-preview">
+                            </div>
+                        </div>
+
+						
+						<div class="form-group">
+				            <label class="text-semibold">Tipo de usuario <span class="label-required">*</span></label>
+				            <select name="tipo" id="tipo" class="form-control blanco" required>
+				            	<option value="">Seleccione...</option>
+				            	<?php 
+					            	foreach ($this->profiles as $value) {
+					            		echo '<option value="'.$value["idprof"].'">'.$value["name_profile"].'</option>';
+					            	}
+				            	?>
+				            </select>
+				        </div>
+
+					</div>
+
+
+				    <div class="col-md-12">
+				    	<br />
+				    	<a class="btn btn-default btn-sm" href="<?=$this->url("adms").$this->queryGET; ?>"><i class="fa fa-arrow-left"></i> Volver</a>
+
+				    	<button class="btn btn-primary btn-sm" id="btnGuardar" type="submit" data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando" ><i class="fa fa-floppy-o"></i> Guardar</button>
+				        
+				    </div>
+				</div>
+		    </form>
+		</div>
+	</div>
+
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+<?php echo $this->inlineScript()->prependFile($this->basePath('js/handlebars-v3.0.0.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/additional-methods.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/jquery.validate.min.js'))
+                                ->prependFile($this->basePath('/plugins/bootstrap-select/ajax-bootstrap-select.min.js'))
+; ?>
+
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/bootstrap-select/ajax-bootstrap-select.min.css">
+
+<script type="text/javascript">
+    
+    //*****************************************************************************
+    //VAR GLOBALES
+    var global_noImage='<?php echo $this->basePath()."/img/".$this->NoImage; ?>';
+    
+	function sendData(url, formData, cargando, $btn){
+
+		var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+
+		$.ajax({
+            url: url, 
+            dataType: "json",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                cargando.html('<i style="width:100%; text-align:center;" class="fa fa-spinner fa-pulse fa-spin fa-3x"></i>');
+                $btn.button('loading');
+            },
+            success: function(data){
+                $btn.button('reset');
+                
+                if(data.status=='ok'){
+                	var context = {msj: data.msj, tipo: "alert-success" };
+                    cargando.html(template(context));
+
+                    setTimeout(function(){
+                    	document.getElementById('guardarUsuario').reset();
+
+                        //DEJAMOS LA IMAGEN POR DEFECTO
+                        $('.img-preview').attr('src',global_noImage)
+                            .fadeIn();
+                    },800);
+                }
+                else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    cargando.html(template(context));
+                }
+            },
+            error: function(){
+                $btn.button('reset');
+                var context = {msj: "Ocurrio un error procesando los datos...", tipo: "alert-danger" };
+                cargando.html(template(context));
+            }
+            
+        });
+	}
+	$(document).ready(function(){
+
+		var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+
+
+        // -----------------------------------------------------------
+        // FORMATEA EL NOMBRE Y LOS PONE EN EL INPUT SLUG
+        $("input[name='nombreUsuario']").change(function () {
+        
+            var value = $.trim($(this).val());
+            value = value.replace(/ /g, "-");
+            $("input[name='slugUser']").val(value.toLowerCase());
+        });
+        // -- FIN FORMATEA NOMBRE
+
+        $('[data-toggle="tooltip"]').tooltip({ html:true });
+
+        var optionRules={
+				image: {
+			      required: true,
+			      extension: "jpg|png|jpeg"
+			    }
+            };
+		var messagesRules={
+                nombreUsuario: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 200 caracteres."
+                },
+                slugUser: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 200 caracteres."
+                },
+                correoUsuario: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 200 caracteres.",
+                    email:"Debe ingresar un correo válido."
+                },
+                passUsuario: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 100 caracteres.",
+                },
+                image:{
+                	required: "Este campo es requerido.",
+                	accept: "Debe ingresar solo imagenes en formato [jpg, png, jpeg]",
+                },
+                tipo:{
+                	required: "Este campo es requerido.",
+                }
+        	};
+		$("#guardarUsuario").validate({
+			rules: optionRules,
+			messages: messagesRules,
+			highlight: function(element, errorClass){ 
+				$(element).closest('.form-group').addClass('has-error');
+			},
+			unhighlight: function(element, errorClass){ 
+				$(element).closest('.form-group').removeClass('has-error');
+			},
+			submitHandler: function(form){
+
+		    	var formData = new FormData( $("#guardarUsuario")[0] );
+                var $btn = $("#btnGuardar");
+		    	sendData($("#guardarUsuario").attr('action'), formData, $("#imgCargando"), $btn );
+			},
+		});
+        //========================================================================
+
+        //MUESTRA UN PRVIEW DE LA IMAGEN CARGADA
+        $(document).on('change', '#image', function(e){
+            var $img=$('.img-preview');
+            if( $(this).val()!="" ){
+                var reader = new FileReader();
+                reader.onload = function(event){
+                    $img.attr('src',event.target.result)
+                        .fadeIn();
+                }
+                reader.readAsDataURL(e.target.files[0]); 
+            }
+            else{
+                $img.attr('src',global_noImage)
+                    .fadeIn();
+            }
+        });
+
+	});
+</script>
+

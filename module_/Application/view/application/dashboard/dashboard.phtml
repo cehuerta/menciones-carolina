@@ -1,0 +1,401 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+?>
+
+<?php
+	$flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+<?php echo $flash->render('msjError',array('alert', 'alert-danger', 'alertaMSJ'));?>
+<?php echo $flash->render('msjExito',array('alert', 'alert-success', 'alertaMSJ'));?>
+
+
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">DASHBOARD</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li></li>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+<?php $date_dia=date('d-m-Y') ?>
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+    
+    <!-- <div class="row">
+
+        <div class="col-lg-5">
+
+                <div class="panel panel-info panel-colorful text-center">
+                    <?php 
+                        // $arr_datos_last_days=array();
+                        // foreach ($readLastDays as $key => $value) {
+                        //     $arr_datos_last_days[]=$value["total"];
+                        // }
+                    ?>
+                    <div class="panel-body panel_activity_last_days" data-datos="<?php //echo $this->escapeHtmlAttr(json_encode($arr_datos_last_days)); ?>" >
+
+                        <div id="read_last_days"></div>
+
+                    </div>
+                    <div class="bg-trans-dark pad-ver">
+                        <h4 class="mar-no text-normal">Leídas</h4>
+                        <em>Últimos 7 dias</em>
+                    </div>
+                </div>
+
+        </div>
+    </div> -->
+
+    <!--Tiles - Bright Version-->
+    <!--===================================================-->
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+    
+            <!--Registered User-->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-success">
+                    <i class="fa fa-users fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin"><?php echo abs($t_locutores); ?></p>
+                    <p class="text-muted mar-no">Locutores</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+                    
+            <!--EXPOSITORES -->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-gray">
+                    <i class="fa fa-user fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin"><?php echo abs($t_clientes); ?></p>
+                    <p class="text-muted mar-no">Clientes</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+
+
+        <div class="col-sm-6 col-lg-3">
+                    
+            <!--PROYECTOS -->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-warning">
+                    <i class="fa fa-th-list fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin"><?php echo abs($t_campanas); ?></p>
+                    <p class="text-muted mar-no">Campañas</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+                    
+            <!--EVENTOS -->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-info">
+                    <i class="fa fa-comment-o fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin"><?php echo abs($t_menciones); ?></p>
+                    <p class="text-muted mar-no">Menciones</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+
+    </div>
+    <!--===================================================-->
+    <!--End Tiles - Bright Version-->
+    
+    <div class="row">
+        <div class="col-sm-12 col-lg-4">
+    
+            <!--Registered User-->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-info">
+                    <i class="fa fa-comment-o fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin js-total_menciones"><?php echo (int)$t_menciones_dia ?></p>
+                    <p class="text-muted mar-no">Menciones del día [<?php echo $date_dia ?>]</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+        <div class="col-sm-12 col-lg-4">
+    
+            <!--New Order-->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-success">
+                    <i class="fa fa-comment-o fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin js-mencion_leidas"><?php echo $t_leidas_dia; ?></p>
+                    <p class="text-muted mar-no">Leidas [<?php echo $date_dia ?>]</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+        <div class="col-sm-12 col-lg-4">
+    
+            <!--Comments-->
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+            <div class="panel media pad-all">
+                <div class="media-left">
+                    <span class="icon-wrap icon-wrap-sm icon-circle bg-danger">
+                    <i class="fa fa-comment fa-2x"></i>
+                    </span>
+                </div>
+    
+                <div class="media-body">
+                    <p class="text-2x mar-no text-thin js-mencions_no_leidas"><?php echo $t_no_leidas_dia; ?></p>
+                    <p class="text-muted mar-no">Sin leer [<?php echo $date_dia ?>]</p>
+                </div>
+            </div>
+            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-6">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-comment-o"></i> Últimas 10 menciones</h3>
+                </div>
+                <div class="panel-body">
+
+                    <?php if(is_array($ultimas_menciones) and count($ultimas_menciones)>0): ?>
+                        <div class="list-group bord-no">
+                            <?php foreach($ultimas_menciones AS $value ): ?>
+
+                                <a class="list-group-item linkView" href="#" data="<?php echo $value['id'] ?>">
+                                    <label class="text-semibold text-primary"><?php echo stripslashes($value['titulo_campana']) ?></label>
+                                    <br />
+                                    <small>
+                                        <?php echo stripslashes($value['dias_mencion']) ?>
+                                    </small>
+                                    <br />
+                                    <small class="text-semibold">
+                                        - <?php echo stripslashes($value['extracto_mencion']) ?>
+                                    </small>
+                                </a>
+
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <h4>No hay nuevas menciones</h4>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-comment-o"></i> Últimas 10 menciones leidas</h3>
+                </div>
+                <div class="panel-body">
+                    <?php if(is_array($ultimas_menciones_leidas) and count($ultimas_menciones_leidas)>0): ?>
+                        <div class="list-group bord-no">
+                            <?php foreach($ultimas_menciones_leidas AS $value ): ?>
+
+                                <a class="list-group-item linkView" href="#" data="<?php echo $value['id'] ?>">
+                                    <label class="text-semibold text-primary"><?php echo stripslashes($value['titulo_campana']) ?></label>
+                                    <br />
+                                    <small class="text-semibold">
+                                        Horario: <?php echo $value['fecha'].' - '.$value['hora'] ?> | Leída: <span class="text-success"><?php echo $value['leida'] ?></span>
+                                    </small>
+                                    <br />
+                                    <small>
+                                        <?php echo stripslashes($value['dias_mencion']) ?>
+                                    </small>
+                                    <br />
+                                    <small class="text-semibold">
+                                        - <?php echo stripslashes($value['extracto_mencion']) ?>
+                                    </small>
+                                </a>
+
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <h4>No hay menciones leidas</h4>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+<?php 
+    echo $this->inlineScript()->prependFile($this->basePath('plugins/sparkline/jquery.sparkline.min.js'))
+                            ->prependFile($this->basePath('plugins/morris-js/morris.min.js'))
+                            ->prependFile($this->basePath('plugins/morris-js/raphael-js/raphael.min.js'))
+                            ;
+?>
+<!--Morris.css -->
+<link href="<?php echo $this->basePath(); ?>/plugins/morris-js/morris.min.css" rel="stylesheet">
+
+
+<script>
+    // *****************************************************
+    //URL MENCIONES
+    var urlGetDataMencion   = '<?php echo $this->url("menciones/mencionesGetData"); ?>';
+
+    // var urlConectados       ='<?php //echo $this->url("dashboard/dashboardConectados"); ?>';
+
+
+    function loadDataGrafico(day_data){
+        var chart = Morris.Line({
+            element: 'morris-chart-network',
+            data: day_data,
+            axes:false,
+            xkey: 'elapsed',
+            ykeys: ['value_android', 'value_ios'],
+            labels: ['ANDROID', 'IOS'],
+            yLabelFormat :function (y) { return y.toString() + ' Conectados'; },
+            gridEnabled: false,
+            gridLineColor: 'transparent',
+            lineColors: ['#5b6b79','#a5a5a5'],
+            lineWidth:[2,1],
+            pointSize:[0,2],
+            fillOpacity:.7,
+            gridTextColor:'#999',
+            parseTime: false,
+            resize:true,
+            behaveLikeLine : true,
+            hideHover: 'auto'
+        });
+    }
+    function loadGraficoConectados(url, $btn){
+        var day_data = [];
+        $btn.button('loading');
+        $btn.niftyOverlay('show');
+
+        $.getJSON(url, function(data){
+            if(data.status=='ok'){
+                day_data=data.data_return;
+                loadDataGrafico(day_data);
+                $(".num-users-online").text(data.total);
+                $(".num-users-online-android").text(data.total_a);
+                $(".num-users-online-ios").text(data.total_ios);
+            }
+            else{
+                $(".num-users-online").text('0');
+                $(".num-users-online-android").text('0');
+                $(".num-users-online-ios").text('0');
+            }
+            $btn.button('reset');
+            $btn.niftyOverlay('hide');
+        }).fail(function(){
+            $btn.button('reset');
+            $btn.niftyOverlay('hide');
+            $(".num-users-online").text('0');
+            $(".num-users-online-android").text('0');
+            $(".num-users-online-ios").text('0');
+        });
+    }
+
+
+    $(document).ready(function(){
+
+        $('.alertaMSJ').delay(2500).slideToggle(2500);
+
+        //OBTENEMOS LOS DATOS DEL GRAFICO
+        // loadGraficoConectados(urlConectados, $("#btnRefreshGrafico"));
+
+        //RECARGAMOS EL GRAFICO
+        // $("#btnRefreshGrafico").on('click', function(){
+        //     var $btn=$(this);
+        //     loadGraficoConectados(urlConectados, $btn);
+        // });
+
+        // var datos_last_days=$(".panel_activity_last_days").data('datos');
+        // $("#read_last_days").sparkline(datos_last_days, {
+        //     type: 'line',
+        //     width: '110',
+        //     height: '50',
+        //     spotRadius: 2.5,
+        //     lineWidth:1.5,
+        //     lineColor:'#ffffff',
+        //     fillColor: false,
+        //     minSpotColor :false,
+        //     maxSpotColor : false,
+        //     highlightLineColor : '#ffffff',
+        //     highlightSpotColor: '#ffffff',
+        //     tooltipChartTitle: 'Actividad últimos 7 dias',
+        //     tooltipPrefix :'Leidas: ',
+        //     spotColor:'#ffffff',
+        //     valueSpots : {
+        //         '0:': '#ffffff'
+        //     }
+        // });
+
+        $(document).on('click', '.linkView', function(e){
+            e.preventDefault();
+            if( $(this).attr('data')!='' ){
+                var datos={
+                    mencion : $(this).attr('data')
+                };
+                getDataView( datos );
+            }
+        });
+    });
+</script>

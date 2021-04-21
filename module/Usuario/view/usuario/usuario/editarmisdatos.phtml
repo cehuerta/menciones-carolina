@@ -1,0 +1,274 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+?>
+
+<script>
+    function selectInCombo(combo,val)
+    {
+        for(var indice=0 ;indice<document.getElementById(combo).length;indice++)
+        {
+            if (document.getElementById(combo).options[indice].value==val ){
+                document.getElementById(combo).selectedIndex =indice;
+            }
+        }
+    }
+</script>
+
+
+<?php
+    $flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+<?php echo $flash->render('msjError',array('alert', 'alert-danger'));?>
+
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">MI PERFIL</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+    
+    <div class="panel">
+
+        <div class="panel-heading">
+            <div class="panel-tools">
+            </div>
+            <h3 class="panel-title">Configuración</h3>
+        </div>
+        
+
+        <!-- ICON CARGANDO -->
+        <div class="panel-alert">
+            <div id="imgCargando" class="alert-wrap in"></div>
+        </div>
+        <!-- /.FIN ICON CARGANDO -->
+
+
+        <div class="panel-body">
+
+            <div class="row">
+
+                <div class="col-md-3 bord-rgt">
+                    <div class="nano-content" tabindex="0" style="right: -17px;">
+                            
+                        <!-- Simple profile -->
+                        <div class="text-center pad-all">
+                            <div class="pad-ver">
+                                <?php if(empty($usuario["logo"])): ?>
+                                    <img style="margin: 0px auto;" src="<?php echo $this->basePath().'/img/'.$this->imgNoImage; ?>" class="img-usuario-perfil img-lg img-border img-circle" alt="Profile Picture">
+                                <?php else: ?>
+                                    <img style="margin: 0px auto;" src="<?php echo $this->rutaUser.'/'.$usuario["slug"].'/'.$usuario["logo"]; ?>" class="img-usuario-perfil img-lg img-border img-circle" alt="Profile Picture">
+                                <?php endif; ?>
+
+                            </div>
+                            <h4 class="text-lg text-overflow mar-no"><?=htmlspecialchars(stripslashes($usuario['nombre_completo']))?></h4>
+                            <p class="text-sm"><?=htmlspecialchars(stripslashes($usuario['name_profile']))?></p>
+                        </div>
+                        <hr>
+                        <ul class="list-group bg-trans">
+
+                            <li class="list-group-item list-item-sm">
+                                <i class="fa fa-calendar fa-fw"></i> Registrado el <?=htmlspecialchars(stripslashes($usuario['fecha_registro_user']))?>
+                            </li>
+                            <li class="list-group-item list-item-sm text-primary text-semibold">
+                                <i class="fa fa-globe fa-fw"></i> <?=htmlspecialchars(stripslashes($usuario['correo']))?>
+                            </li>
+                        </ul>
+                        <hr>
+                        
+                    </div>
+
+                </div>
+
+                
+
+                <div class="col-md-6 pad-lft">
+                	
+                    <form action="<?=$this->url("editarmisdatos")?>" name="guardarUsuario" id="guardarUsuario" method="POST" >
+                                                                    
+                        <br />
+                        <div class="form-group">
+                            <label class="text-semibold">Nombre completo <span class="label-required">*</span></label>
+                            <input type="text" name="nombreUsuario" maxlength="200" id="nombreUsuario" value="<?=htmlspecialchars(stripslashes($usuario['nombre_completo']))?>" class="form-control" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="text-semibold">Correo <span class="label-required">*</span></label>
+                            <input type="email" name="correoUsuario" maxlength="200" id="correoUsuario" value="<?=$usuario['correo']?>" class="form-control" required />
+                        </div>
+                        
+                
+                        <div class="form-group">
+                            <label class="text-semibold">Logo <em>(Seleccione solo si desea cambiar el logo)</em></label>
+                            <input type="file" accept=".jpg, .png, .jpeg" name="image" id="image" class="form-control" />
+                            <em>.png, .jpg, .jpeg</em>
+                        </div>
+            			
+                        <h4>Cambiar Contraseña? </h4>
+                        <div class="radio">
+                            <label class="form-radio form-normal">
+                                <input type="radio" checked="" name="cambiarContrasena" id="cambiarContrasena1" value="SI"> SI
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label class="form-radio form-normal">
+                                <input type="radio" checked="" name="cambiarContrasena" id="cambiarContrasena2" value="NO" checked> NO
+                            </label>
+                        </div>
+
+                        
+
+                        <label class="text-semibold">Contraseña Actual</label>
+                        <input type="password" name="passUsuario" maxlength="100" id="passUsuario" class="form-control" />
+
+                        <br />
+                        <label class="text-semibold">Nueva contraseña *</label><br />
+                        <input class="form-control" type="password" name="nuevaPassUser1" maxlength="100" id="nuevaPassUser1" value="" required />
+
+                        <br />
+                        <label class="text-semibold">Ingrese nuevamente la contraseña *</label><br />
+                        <input class="form-control" type="password" name="nuevaPassUser2" maxlength="100" id="nuevaPassUser2" value="" required />
+
+                        <br />
+            			<button class="btn btn-primary btn-sm" id="btnGuardar" data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando"><i class="fa fa-floppy-o"></i> Guardar</button>
+                	
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+<?php 
+    echo $this->inlineScript()->prependFile($this->basePath('js/handlebars-v3.0.0.js'))
+                                ->prependFile($this->basePath('js/jquery.validate.min.js'))
+?>
+
+<script type="text/javascript">
+    
+    // *****************************************************
+    //VAR GLOBALES
+    var global_noImage='';
+    
+    function sendData(url, formData, sendAction, cargando, $btn)
+    {
+        var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+
+    
+        $.ajax({
+            url: url, 
+            dataType: "json",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                $btn.button('loading');
+                cargando.html('<i style="width:100%; text-align:center;" class="fa fa-spinner fa-pulse fa-spin fa-3x"></i>');
+            },
+            success: function(data){
+                $btn.button('reset');
+
+                if(data.status=='ok'){
+                    var context = {msj: data.msj, tipo: "alert-success" };
+                    cargando.html(template(context));
+
+                    setTimeout(function(){
+                        location.reload();
+                    },800);
+                }
+                else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    cargando.html(template(context));
+                }
+            },
+            error: function(){
+                $btn.button('reset');
+                var context = {msj: "Ocurrio un error procesando los datos...", tipo: "alert-danger" };
+                cargando.html(template(context));
+            }
+                    
+        });
+    }
+
+    $(document).ready(function(){
+
+        global_noImage=$(".img-usuario-perfil").attr('src');
+
+        $('#alertaMSJ').delay(2500).slideToggle(2500);
+
+        $("#passUsuario").attr('disabled', true);
+        $("#nuevaPassUser1").attr('disabled', true);
+        $("#nuevaPassUser2").attr('disabled', true);  
+
+        $("input[name='cambiarContrasena']").change(function(){
+            
+            if($(this).val()=="SI") {
+                
+                $("#passUsuario").attr('disabled', false);
+                $("#nuevaPassUser1").attr('disabled', false);
+                $("#nuevaPassUser2").attr('disabled', false);
+            }else{
+                $("#passUsuario").attr('disabled', true);
+                $("#nuevaPassUser1").attr('disabled', true);
+                $("#nuevaPassUser2").attr('disabled', true);   
+            }
+        });
+
+
+
+
+        $("#guardarUsuario").validate({
+            errorPlacement: function(){ return false; },
+            highlight: function(element, errorClass){ 
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(element, errorClass){ 
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function(form){
+                var formData = new FormData( $("#guardarUsuario")[0] );
+                formData.append('user', '<?php echo (int)$usuario["id_user"] ?>' );
+
+                sendData('<?php echo $this->url("editarMisdatosAjax") ?>', formData, 'editar', $("#imgCargando"), $("#btnGuardar") );
+            }
+        });
+
+
+        //MUESTRA UN PRVIEW DE LA IMAGEN CARGADA
+        $(document).on('change', '#image', function(e){
+            var $img=$('.img-usuario-perfil');
+            if( $(this).val()!="" ){
+                var reader = new FileReader();
+                reader.onload = function(event){
+                    $img.attr('src',event.target.result)
+                        .fadeIn();
+                }
+                reader.readAsDataURL(e.target.files[0]); 
+            }
+            else{
+                $img.attr('src',global_noImage)
+                    .fadeIn();
+            }
+        });
+
+    });
+</script>

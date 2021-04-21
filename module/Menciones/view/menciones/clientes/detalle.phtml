@@ -1,0 +1,737 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }    
+
+?>
+
+<script>
+    
+    function selectInCombo(combo,val)
+    {
+        for(var indice=0 ;indice<document.getElementById(combo).length;indice++)
+        {
+            if (document.getElementById(combo).options[indice].value==val ){
+                document.getElementById(combo).selectedIndex =indice;
+            }
+        }
+    }
+
+</script>
+
+<?php
+    $flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+
+<?php echo $flash->render('msjError',array('alert', 'alert-danger', 'alertaMSJ'));?>
+<?php echo $flash->render('msjExito',array('alert', 'alert-success', 'alertaMSJ'));?>
+
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">EXPOSITORES</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li><a href="<?php echo $this->url('expositores').$this->queryGET ?>">Expositores</a></li>
+    <li>Detalle - <?php echo stripslashes($expositor["expositor_name"]) ?></li>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+    <div class="row">
+        <div class="col-lg-3 col-md-4">
+            <div class="panel widget">
+                <div class="widget-header bg-gray">
+                    <?php 
+                        $imagen_expositor=$this->basePath().'/img/'.$this->NoImage;
+                        if(!empty($expositor["expositor_image"]))
+                            $imagen_expositor=$this->rutaExpositores.'/m_'.$expositor["expositor_image"];
+                    ?>
+                    <img class="widget-bg img-responsive" src="<?php echo $imagen_expositor; ?>" alt="Image">
+                </div>
+                <div class="widget-body text-center">
+                    <img alt="Profile Picture" class="widget-img img-border-light" src="<?php echo $this->imagen_qr ?>">
+
+                    <h4 class="mar-no text-overflow" title="<?php echo $this->escapeHtmlAttr(stripslashes($expositor["expositor_name"])) ?>">
+                        <?php echo stripslashes($expositor["expositor_name"]) ?>
+                    </h4>
+                    <p class="text-muted mar-btm">
+                        <?php echo stripslashes($expositor["expositor_specialty"]) ?>
+                    </p>
+
+                    <div class="pad-ver">
+                        <?php if( (int)$expositor["expositor_status"]==1): ?>
+                            <label class="label label-table label-success"><em class="text-white">HABILITADO</em></label>
+                        <?php else: ?>
+                            <label class="label label-table label-danger"><em class="text-white">DESHABILITADO</em></label>
+                        <?php endif; ?>
+                    </div>
+
+                    <ul class="list-group bg-trans">
+
+                        <!-- Profile Details -->
+                        <li class="list-group-item list-item-sm">
+                            <i class="fa fa-at fa-fw"></i>
+                            <?php 
+                                if( !empty($expositor["expositor_email"])):
+                                    echo stripslashes($expositor["expositor_email"]);
+                                else:
+                                    echo "--Sin Información--";
+                                endif;
+                            ?>
+                        </li>
+                        <li class="list-group-item list-item-sm">
+                            <i class="fa fa-calendar fa-fw"></i> <?php echo stripslashes($expositor["expositor_date_create"]) ?>
+                        </li>
+
+                        <li class="list-group-item list-item-sm">
+                            <i class="fa fa-map-marker fa-fw"></i> 
+                            <?php echo $expositor["section_name"]; ?> /
+                            <?php 
+                                if( !empty($expositor["expositor_place"])):
+                                    echo stripslashes($expositor["expositor_place"]);
+                                else:
+                                    echo "--Sin Información--";
+                                endif;
+                            ?>
+                        </li>
+                        <li class="list-group-item list-item-sm">
+                            <i class="fa fa-globe fa-fw"></i>
+                            <?php 
+                                if( !empty($expositor["expositor_url"])):
+                                    echo '<a 
+                                            href="'.filter_var(stripcslashes($expositor["expositor_url"]), FILTER_SANITIZE_URL).'" 
+                                            target="_blank"
+                                            class="btn-link text-purple text-bold">
+                                            Enlace
+                                        </a>';
+                                else:
+                                    echo "--Sin Información--";
+                                endif;
+                            ?>
+                            
+                        </li>
+                        
+                    </ul>
+                    <hr>
+                    
+                    <div class="pad-hor">
+                        <h5 class="showHideDescription btn-link" style="cursor: pointer;" title="Mostrar/Ocultar"><i class="fa fa-eye"></i> Descripción</h5>
+                        <small class="text-muted text-overflow event-text-description">
+                            <?php echo nl2br(stripslashes($expositor["expositor_description"])) ?>
+                        </small>
+                    </div>
+                    <hr>
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-9 col-md-8">
+
+            <div class="well well-sm">
+                <a 
+                    href="<?php echo $this->url('expositores').$this->queryGET ?>" 
+                    data-toggle="tooltip" 
+                    data-placement="top" 
+                    title="Regresar al listado" 
+                    class="btn btn-default btn-icon fa fa-arrow-left">
+                    Volver
+                </a>
+
+                <a 
+                    href="<?php echo $this->url('expositores/expositoresPdf', array('id'=>$expositor['idexp'], 'content'=>'qr')) ?>"
+                    target="_blank"
+                    data-toggle="tooltip" 
+                    data-placement="top" 
+                    title="Generar pdf con QR" 
+                    class="btn btn-default btn-icon fa fa-qrcode"> Código QR
+                </a>
+            </div>
+            
+            <div class="tab-base">
+                    
+                <!--Nav tabs-->
+                <ul class="nav nav-tabs tabs-right">
+
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-favoritos-eventos">
+                            <i class="fa fa-heart"></i> FAVORITOS <span class="badge badge-primary t_favorito"><?php echo (int)$t_favoritos ?></span>
+                        </a>
+                    </li>
+
+                    <li >
+                        <a data-toggle="tab" href="#tab-expositores-eventos">
+                            <i class="fa fa-suitcase"></i> EVENTOS <span class="badge badge-primary t_eventos_exp"><?php echo (int)$this->t_eventos_exp; ?></span>
+                        </a>
+                    </li>
+                    
+                </ul>
+
+                <!--Tabs Content-->
+                <div class="tab-content">
+                    
+                    <div id="tab-favoritos-eventos" class="tab-pane fade active in">
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="tablaFavoritos"  cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>USUARIO</th>
+                                        <th>FAVORITO</th>
+                                        <th>FECHA</th>
+                                        <th>ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+
+                    <div id="tab-expositores-eventos" class="tab-pane fade">
+
+                        <div class="well well-sm">
+                            <form id="formEventoExpositor" action="<?php echo $this->url("eventoExpositor/eventoExpositorIngresar"); ?>" method="post" >
+                                
+                                <div class="form-group">
+                                    <label for="evento">Asignar evento</label>
+                                    <div class="input-group mar-btm">
+                                        <select name="evento" id="evento" class="form-control with-ajax" data-live-search="true">
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button 
+                                                class="btn btn-primary btnAddExpositorEvento" 
+                                                data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando">
+                                                <i class="fa fa-plus"></i> Asignar
+                                            </button>
+
+                                        </span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered" id="tablaExpositores"  cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>EXPOSITOR</th>
+                                        <th>EVENTO</th>
+                                        <th>ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    
+
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+<?php 
+    echo $this->inlineScript()->prependFile($this->basePath('js/jquery.magnific-popup.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/additional-methods.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/jquery.validate.min.js'))
+
+                                ->prependFile($this->basePath('plugins/dropzone/dropzone.min.js'))
+                                ->prependFile($this->basePath('plugins/bootstrap-timepicker/bootstrap-timepicker.min.js'))
+                                ->prependFile($this->basePath('plugins/bootstrap-datepicker/bootstrap-datepicker.js'))
+
+                                ->prependFile($this->basePath('plugins/fullcalendar/fullcalendar.min.js'))
+                                ->prependFile($this->basePath('plugins/fullcalendar/lib/jquery-ui.custom.min.js'))
+                                ->prependFile($this->basePath('plugins/fullcalendar/lib/moment.min.js'))
+
+
+                                ->prependFile($this->basePath('/plugins/bootstrap-select/ajax-bootstrap-select.min.js'))
+                                ->prependFile($this->basePath('/plugins/bootstrap-select/bootstrap-select.min.js'));
+?>
+
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/css/magnific-popup.css">
+
+<!-- SELECT BOOTSTRAP -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/bootstrap-select/bootstrap-select.min.css">
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/bootstrap-select/ajax-bootstrap-select.min.css">
+
+<!--Dropzone [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath(); ?>/plugins/dropzone/dropzone.css" rel="stylesheet">
+
+<!--Bootstrap Timepicker [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath(); ?>/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+
+<!--Bootstrap Datepicker [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath(); ?>/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet">
+
+<!--Full Calendar [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath(); ?>/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
+
+<script type="text/javascript">
+    
+    // *****************************************************
+    //URL EVENTOS
+    var urlAutocompleteEvento='<?php echo $this->url("eventos/eventosAutorcomplete"); ?>';
+    var urlTablaEventos='<?php echo $this->url("eventos/eventosTabla"); ?>';
+    var global_isLoadTablaEventos=false;
+    var global_isLoadCalendarioEventos=false;
+
+    //******************************************************
+    //URL RESERVAS
+    var urlEliminarReserva='<?php echo $this->url("reservas/reservasEliminar"); ?>';
+    var urlTablaReservas='<?php echo $this->url("reservas/reservasTabla") ?>';
+    var global_isLoadTablaReserva=false;
+
+    //******************************************************
+    //URL FAVORITOS
+    var urlEliminarFavorito='<?php echo $this->url("favoritos/favoritosEliminar"); ?>';
+    var urlTablaFavoritos='<?php echo $this->url("favoritos/favoritosTabla") ?>';
+    var global_isLoadTablaFavorito=false;
+
+    //******************************************************
+    //URL ASIGNACION EXPOSITOR EVENTO
+    var urlIngresarEventoExpositor='<?php echo $this->url("eventoExpositor/eventoExpositorIngresar"); ?>';
+    var urlEliminarEventoExpositor='<?php echo $this->url("eventoExpositor/eventoExpositorEliminar"); ?>';
+    var urlTablaEventoExpositor='<?php echo $this->url("eventoExpositor/eventoExpositorTabla") ?>';
+    var global_isLoadTablaEventoExpositor=false;
+
+
+    // *****************************************************
+    //URL EXPOSITOR
+    var urlAutocompleteExpositor='<?php echo $this->url("expositores/expositoresAutorcomplete"); ?>';
+
+    var global_noImage='<?php echo $this->basePath()."/img/".$this->NoImage; ?>';
+    var global_expositor='<?php echo $expositor["idexp"] ?>';
+
+    //========================================================================
+    // LIMPIA EL FORMULARIO
+    function clearForm()
+    {
+        document.getElementById("saveEvento").reset();
+        $("#eventoHidden").val("0");
+        $(".imgCargando").empty();
+    }
+
+    function clearClassRow(tabla_name){
+        $("#"+tabla_name+" tr").removeClass("danger");
+        $("#"+tabla_name+" tr").removeClass("info");
+    }
+
+
+    //========================================================================
+    // ENVIA LOS DATOS DE ING-EDIT
+    function sendDataAjax(url, formData, $btn)
+    {
+        $.ajax({
+            url: url, 
+            dataType: "json",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                $btn.button('loading');
+            },
+            success: function(data){
+                $btn.button('reset');
+
+                if(data.status=='ok'){
+                    swal("Agregado", data.msj, "success");
+
+                    $('#tablaExpositores').DataTable().draw(false);
+                    if(typeof data.t_eventos_exp!='undefined' ){
+                        $(".t_eventos_exp").text(data.t_eventos_exp);
+                    }
+                }
+                else{
+                    swal("Error", data.msj, "error");
+                }
+            },
+            error: function(){
+                $btn.button('reset');
+                swal("Error", "Error en el servidor, por favor contacte a su administrador de sistema.", "error");
+            }
+            
+        });
+    }
+
+
+
+    function loadDataTablaFavorito(){
+        
+        if( global_isLoadTablaFavorito==true ){
+            $('#tablaFavoritos').DataTable().destroy();
+        }
+
+        $('#tablaFavoritos').DataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": urlTablaFavoritos,
+            "columns": [
+                { "data": "usuario" },
+                { "data": "relacion" },
+                { "data": "fecha" },
+                { "data": "version" }
+            ],
+            "columnDefs": [ { 
+                        "targets": 3, 
+                        "orderable": false 
+            } ],
+            "order": [ 2, "desc" ],
+            responsive: true,
+            "dom": 'T<"clear">lfrtip',
+            "tableTools": {
+                "sSwfPath": "<?php echo $this->basePath()?>/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+            },
+            "fnServerParams": function (aoData) { 
+                aoData.push({ "name": 'relacion', "value": global_expositor });
+                aoData.push({ "name": 'type', "value": 'expositor' });
+            },
+            "oLanguage": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior",
+                },
+                "fnInfoCallback": null,
+            },
+            "fnDrawCallback": function( oSettings ) {
+                // -------------------------------------------------
+                // TOOLTIP DE LOS BOTONES
+                $('#tablaFavoritos [data-toggle="tooltip"]').tooltip({ html:true });
+
+                $("#tablaFavoritos img.lazy").lazyload({
+                    effect: "fadeIn"
+                });
+            }
+        });
+        
+    }
+
+    function loadDataTablaEventoExpositor(){
+        
+        if( global_isLoadTablaEventoExpositor==true ){
+            $('#tablaExpositores').DataTable().destroy();
+        }
+
+        $('#tablaExpositores').DataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": urlTablaEventoExpositor,
+            "columns": [
+                { "data": "expositor" },
+                { "data": "evento" },
+                { "data": "version" }
+            ],
+            "columnDefs": [ { 
+                        "targets": 2, 
+                        "orderable": false 
+            } ],
+            "order": [ 0, "desc" ],
+            responsive: true,
+            "dom": 'T<"clear">lfrtip',
+            "tableTools": {
+                "sSwfPath": "<?php echo $this->basePath()?>/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+            },
+            "fnServerParams": function (aoData) { 
+                aoData.push({ "name": 'expositor', "value": global_expositor });
+            },
+            "oLanguage": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior",
+                },
+                "fnInfoCallback": null,
+            },
+            "fnDrawCallback": function( oSettings ) {
+                // -------------------------------------------------
+                // TOOLTIP DE LOS BOTONES
+                $('#tablaExpositores [data-toggle="tooltip"]').tooltip({ html:true });
+
+                $("#tablaExpositores img.lazy").lazyload({
+                    effect: "fadeIn"
+                });
+            }
+        });
+        
+    }
+
+    function deleteData(url, datos, tabla_name, textos_swal){
+
+        swal({
+            title: "¿Eliminar?",
+            text: textos_swal.text,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Si, Eliminar",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+        }, function (isConfirm) {
+            if (isConfirm) {
+                $.post( url, datos, function( data ) {
+                    if (data.status=="ok") {
+
+                        swal("Eliminado!", data.msj, "success");
+
+                        if(typeof data.t_ticket!='undefined' ){
+                            $(".t_ticket").text(data.t_ticket);
+                        }
+                        else if(typeof data.t_favorito!='undefined' ){
+                            $(".t_favorito").text(data.t_favorito);
+                        }
+                        else if(typeof data.t_eventos_exp!='undefined' ){
+                            $(".t_eventos_exp").text(data.t_eventos_exp);
+                        }
+
+                        setTimeout(function(){
+                            $('#'+tabla_name).DataTable().draw(false);
+                        }, 700);
+                    }
+                    else{
+                        swal("Error", data.msj, "error");
+                    }
+                    clearClassRow(tabla_name);
+                    
+                }, "json").fail(function(){
+                    clearClassRow(tabla_name);
+                    console.log('Error en el server');
+                    swal("Error", 'Error en el servidor (contacte a su administrador).', "error");
+                });
+            }
+            else{
+                clearClassRow(tabla_name);
+            }
+            
+        });
+    }
+
+
+    function initSelectBootstrap(url, $selector, datos){
+        //========================================================================
+        //CONFIGURACION AJAX SELECT
+        var options = {
+            ajax: {
+                url     : url,
+                type    : 'POST',
+                dataType: 'json',
+                data    : datos
+            },
+            locale        : {
+                emptyTitle: 'Ingrese texto para buscar...',
+                searchPlaceholder:'Buscar...',
+                preserveSelected: 'Selección actual',
+                currentlySelected: 'Selección actual',
+                errorText: 'No se encontrarón resultados',
+                statusInitialized: '',
+                statusNoResults: 'No se encontrarón resultados',
+                statusSearching: 'Buscando...',
+            },
+            log           : 0,
+            preprocessData: function (data) {
+                var i, l = data.items.length, array = [];
+                if (l) {
+                    for (i = 0; i < l; i++) {
+                        array.push($.extend(true, data.items[i], {
+                            text : data.items[i].nombre,
+                            value: data.items[i].id,
+                        }));
+                    }
+                }
+                // You must always return a valid array when processing data. The
+                // data argument passed is a clone and cannot be modified directly.
+                return array;
+            }
+        };
+
+        $selector.selectpicker().filter('.with-ajax').ajaxSelectPicker(options);
+        $selector.trigger('change');
+        //========================================================================
+    }
+
+    function clearSelectBootstrap($selector){
+        $selector.empty();
+        $selector.selectpicker('refresh');
+    }
+
+    $(document).ready(function(){
+
+        var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+        var sourceCarg   = $("#imgCargando-template").html();
+        var templateCarg = Handlebars.compile(sourceCarg);
+
+        //INICIALIZAMOS TOOLTIP
+        $('[data-toggle="tooltip"]').tooltip({ html:true });
+
+
+        $('.alertaMSJ').delay(2500).slideToggle(2500);
+
+        $(".showHideDescription").on('click', function(){
+            if( $(".event-text-description").hasClass('text-overflow') ){
+                $(".event-text-description").removeClass('text-overflow');
+                $(this).html('<i class="fa fa-eye-slash"></i> Descripción');
+            }
+            else{
+                $(".event-text-description").addClass('text-overflow');
+                $(this).html('<i class="fa fa-eye"></i> Descripción');
+            }
+        });
+
+
+        //=========================================================
+        loadDataTablaFavorito();
+        global_isLoadTablaFavorito=true;
+        //=========================================================
+
+        //=========================================================
+        loadDataTablaEventoExpositor();
+        global_isLoadTablaEventoExpositor=true;
+        //=========================================================
+
+        var datos_select={
+            search: '{{{q}}}'
+        };
+        initSelectBootstrap(urlAutocompleteEvento , $("#evento"), datos_select);
+
+
+        var optionRules={
+        };
+        var messagesRules={
+        };
+        $("#formEventoExpositor").validate({
+            option:optionRules,
+            messages:messagesRules,
+            errorPlacement: function(error, element) {
+                $(element).closest('.form-group').append(error);
+            },
+            highlight: function(element, errorClass){ 
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(element, errorClass){ 
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function(form){
+
+                var formData = new FormData( $("#formEventoExpositor")[0] );
+                formData.append('expositor', global_expositor);
+                formData.append('controller', 'expositores');
+                clearSelectBootstrap( $("#evento") );
+                sendDataAjax( urlIngresarEventoExpositor , formData, $(".btnAddExpositorEvento") );
+            }
+        });
+
+
+
+        
+        //========================================================================
+        //ELIMINA
+        $('#tablaReservas, #tablaFavoritos, #tablaExpositores').on('click', '.linkEliminar',function () {
+            var datos={};
+            var textos_swal={
+                text : ''
+            }
+            if( $(this).parents('table').attr('id')=='tablaReservas' ){
+
+                var evento          = $(this).data('evento');
+                var usuario         = $(this).data('user');
+                var ticket          = $(this).data('id');
+                datos.evento        = evento;
+                datos.usuario       = usuario;
+                datos.ticket        = ticket;
+                datos.controller    = 'expositores';
+
+                $("#tablaReservas #row_"+ticket ).addClass("danger");
+                textos_swal.text='Estas seguro de eliminar este ticket de reserva?';
+
+                deleteData(urlEliminarReserva, datos, 'tablaReservas', textos_swal);
+            }
+            else if( $(this).parents('table').attr('id')=='tablaFavoritos' ){
+
+                var favorito      = $(this).data('id');
+                datos.favorito    = favorito;
+                datos.controller  = 'expositores';
+
+                $("#tablaFavoritos #row_"+favorito ).addClass("danger");
+                textos_swal.text='Estas seguro de eliminar este favorito?';
+
+                deleteData(urlEliminarFavorito, datos, 'tablaFavoritos', textos_swal);
+            }
+            else if( $(this).parents('table').attr('id')=='tablaExpositores' ){
+
+                var relacion      = $(this).data('id');
+                datos.relacion    = relacion;
+                datos.controller  = 'expositores';
+
+                $("#tablaExpositores #row_"+relacion ).addClass("danger");
+                textos_swal.text='Estas seguro de eliminar esta asignación?';
+
+                deleteData(urlEliminarEventoExpositor, datos, 'tablaExpositores', textos_swal);
+            }
+            
+            
+        });
+
+
+    });
+
+</script>
+

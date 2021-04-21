@@ -1,0 +1,667 @@
+<?php echo $this->doctype(); ?>
+<html lang="en" class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle("MENCIONES")->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+        <meta name="description" content="Dashboard">
+        <meta name="author" content="Ratiboo">
+
+        <!-- Le styles -->
+        <?php $r=mt_rand(1,50); ?>
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath().'/img/logo/logo.png?r='.$r ))
+                        ->prependStylesheet($this->basePath() . '/plugins/animate-css/animate.min.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/sweetalert/lib/sweet-alert.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/datatables/media/css/dataTables.bootstrap.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/pace/pace.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/demo/nifty-demo.min.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/bootstrap-select/bootstrap-select.min.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/switchery/switchery.min.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/font-awesome/css/font-awesome.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/themes/type-c/theme-dark.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/nifty.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+                        ->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin')
+                        ; ?>
+
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath() . '/js/handlebars-v3.0.0.js')
+            ->prependFile($this->basePath() . '/plugins/sweetalert/lib/sweet-alert.min.js')
+            ->prependFile($this->basePath() . '/js/jquery.lazyload.min.js')
+            ->prependFile($this->basePath() . '/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js')
+            ->prependFile($this->basePath() . '/plugins/datatables/media/js/dataTables.bootstrap.js')
+            ->prependFile($this->basePath() . '/plugins/datatables/media/js/jquery.dataTables.js')
+            ->prependFile($this->basePath() . '/js/demo/nifty-demo.min.js')
+            ->prependFile($this->basePath() . '/plugins/bootstrap-select/bootstrap-select.min.js')
+            ->prependFile($this->basePath() . '/plugins/switchery/switchery.min.js')
+            ->prependFile($this->basePath() . '/plugins/fast-click/fastclick.min.js')
+            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+            ->prependFile($this->basePath() . '/js/jquery-2.1.1.min.js')
+            ->prependFile($this->basePath() . '/plugins/pace/pace.min.js')
+        ; ?>
+
+    </head>
+
+    <!-- class fixed-sidebar -->
+    <body >
+
+
+        <div id="container" class="effect mainnav-lg">
+        
+            <!--NAVBAR-->
+            <!--===================================================-->
+            <header id="navbar">
+                <div id="navbar-container" class="boxed">
+
+                    <!--Brand logo & name-->
+                    <!--================================-->
+                    <div class="navbar-header">
+                        <a href="" class="navbar-brand" >
+                            <img src="<?php echo $this->basePath(); ?>/img/logo.png" alt="Nifty Logo" class="brand-icon">
+                            <div class="brand-title">
+                                <span class="brand-text">MENCIONES</span>
+                            </div>
+                        </a>
+                    </div>
+                    <!--================================-->
+                    <!--End brand logo & name-->
+
+
+                    <!--Navbar Dropdown-->
+                    <!--================================-->
+                    <div class="navbar-content clearfix">
+                        <ul class="nav navbar-top-links pull-left">
+
+                            <!--Navigation toogle button-->
+                            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                            <li class="tgl-menu-btn">
+                                <a class="mainnav-toggle" href="#">
+                                    <i class="fa fa-navicon fa-lg"></i>
+                                </a>
+                            </li>
+                            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                            <!--End Navigation toogle button-->
+                            
+                        </ul>
+                        <ul class="nav navbar-top-links pull-right">
+
+
+                            <!--User dropdown-->
+                            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                            <li id="dropdown-user" class="dropdown">
+
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                                    <span class="pull-right">
+                                        <img class="img-circle img-user media-object" src="<?php echo $this->logo; ?>" alt="Profile Picture">
+                                    </span>
+                                    <div class="username hidden-xs"><?php echo $this->nameUser; ?></div>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-md dropdown-menu-right with-arrow panel-default">
+
+                                    <!-- User dropdown menu -->
+                                    <ul class="head-list">
+                                        
+                                        <li>
+                                            <a href="<?php echo $this->url('editarmisdatos'); ?>" class="link_myData">
+                                                <i class="fa fa-gear fa-fw fa-lg"></i> Editar
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                    <!-- Dropdown footer -->
+                                    <div class="pad-all text-right">
+                                        <a href="<?php echo $this->url('cerrar'); ?>" class="btn btn-primary link_logout" >
+                                            <i class="fa fa-sign-out fa-fw"></i> Logout
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                            <!--End user dropdown-->
+
+                        </ul>
+                    </div>
+                    <!--================================-->
+                    <!--End Navbar Dropdown-->
+
+                </div>
+            </header>
+            <!--===================================================-->
+            <!--END NAVBAR-->
+
+            <div class="boxed">
+
+                <!--CONTENT CONTAINER-->
+                <!--===================================================-->
+                <div id="content-container">
+
+                    <!-- //CONTENIDO -->
+                    <?php  echo $this->content; ?>
+
+                </div>
+                <!--===================================================-->
+                <!--END CONTENT CONTAINER-->
+
+
+                
+                <!--MAIN NAVIGATION-->
+                <!--===================================================-->
+                <nav id="mainnav-container">
+                    <div id="mainnav">
+
+                        <!--Menu-->
+                        <!--================================-->
+                        <div id="mainnav-menu-wrap">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    <ul id="mainnav-menu" class="list-group">
+                            
+                                        <!--Category name-->
+                                        <li class="list-header">MENÚ</li>
+                            
+                                        <!--Menu list item-->
+                                        
+                                        <li>
+                                            <a href="<?php echo $this->url('dashboard'); ?>">
+                                                <i class="fa fa-dashboard"></i>
+                                                <span class="menu-title">
+                                                    <strong>DASHBOARD</strong>
+                                                </span>
+                                            </a>
+                                        </li>
+
+                                        <?php if($this->type!=3): ?>
+                                            
+                                            <li>
+                                                <a href="<?php echo $this->url('clientes'); ?>">
+                                                    <i class="fa fa-user"></i>
+                                                    <span class="menu-title">
+                                                        <strong>CLIENTES</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="<?php echo $this->url('pautas'); ?>">
+                                                    <i class="fa fa-list"></i>
+                                                    <span class="menu-title">
+                                                        <strong>PAUTAS</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="<?php echo $this->url('campanas'); ?>">
+                                                    <i class="fa fa-th-list"></i>
+                                                    <span class="menu-title">
+                                                        <strong>CAMPAÑAS</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="<?php echo $this->url('categorias'); ?>">
+                                                    <i class="fa fa-th-list"></i>
+                                                    <span class="menu-title">
+                                                        <strong>CATEGORÍAS</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="<?php echo $this->url('programas'); ?>">
+                                                    <i class="fa fa-th-list"></i>
+                                                    <span class="menu-title">
+                                                        <strong>PROGRAMAS</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+
+                                        <?php endif; ?>
+                                        
+
+                                        <?php if($this->type==3): ?>
+                                            <li>
+                                                <a href="<?php echo $this->url('locutor'); ?>">
+                                                    <i class="fa fa-microphone"></i>
+                                                    <span class="menu-title">
+                                                        <strong>LOCUTOR</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+
+                                        <?php if($this->type!=3): ?>
+                                            <li class="one-level">
+                                                <a href="<?php echo $this->url('adms'); ?>">
+                                                    <i class="fa fa-users fa-fw"></i> 
+                                                    <span class="menu-title">
+                                                        <strong>USUARIOS</strong>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+
+
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--================================-->
+                        <!--End menu-->
+
+                    </div>
+                </nav>
+                <!--===================================================-->
+                <!--END MAIN NAVIGATION-->
+                
+
+                <!--ASIDE-->
+                <!--===================================================-->
+                <aside id="aside-container">
+                    <div id="aside">
+                        <div class="nano">
+                            <div class="nano-content">
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+                <!--===================================================-->
+                <!--END ASIDE-->
+
+            </div>
+
+            
+
+            <!-- FOOTER -->
+            <!--===================================================-->
+            <footer id="footer">
+
+                <!-- Visible when footer positions are static -->
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                <div class="hide-fixed pull-right pad-rgt">MENCIONES</div>
+
+
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                <!-- Remove the class name "show-fixed" and "hide-fixed" to make the content always appears. -->
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+                <p class="pad-lft">&#0169; <?php echo date('Y') ?> RATIBOO</p>
+
+            </footer>
+            <!--===================================================-->
+            <!-- END FOOTER -->
+
+
+            <!-- SCROLL TOP BUTTON -->
+            <!--===================================================-->
+            <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+            <!--===================================================-->
+
+        </div>
+        <!--===================================================-->
+        <!-- END OF CONTAINER -->
+
+
+        
+
+    </body>
+
+    <!--===================================================-->
+    <!-- INICIALIZA FUNCIONALIDADES DEL TEMA -->
+    <script type="text/javascript" src="<?php echo $this->basePath('/js/nifty.min.js') ?>"></script>
+    <!--===================================================-->
+    <!-- END INICIALIZA FUNCIONALIDADES DEL TEMA -->
+
+    <script>
+
+        function activeMenu(path){
+            $.each( $('#mainnav-menu a'), function(i, item){
+                var href=$(this).attr('href');
+                if( href===path.substring(0, href.length) ){
+                    $(this).parents('.one-level').addClass('active');
+                    $(this).parents('ul.collapse').addClass('in');
+                    $(this).parent().addClass('active');
+                }
+            });
+        }
+
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            var expires = "expires="+d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        }
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+
+        function getDataView(datos){
+            var source   = $("#alert-template").html();
+            var template = Handlebars.compile(source);
+
+            var sourceCarg   = $("#imgCargando-template").html();
+            var templateCarg = Handlebars.compile(sourceCarg);
+
+            var sourceHora   = $("#item-hora-data-template").html();
+            var templateHora = Handlebars.compile(sourceHora);
+
+            $('#myModalVerMencion').modal({
+                backdrop: 'static'
+            });
+
+
+            // ++++++++++++++++++++++++++++++++++++++
+            // MENSAJE CARGANDO
+            $("#myModalVerMencion .imgCargando").html(templateCarg( {} ));
+
+            // ----------------------------------------------
+            // ENVIA PETICION
+            $.post( urlGetDataMencion, datos, function( data ) {
+
+                $("#myModalVerMencion .imgCargando").empty();
+                if (data.status=="ok") {
+                    
+                    $("#myModalVerMencion .modal_campana").html( data.campana.nombre );
+                    $("#myModalVerMencion .modal_cliente").html( data.cliente.nombre );
+                    $("#myModalVerMencion .modal_mencion").html( data.mention_description_f );
+
+                    $("#myModalVerMencion .modal_t_horarios").html( data.t_mention_schedule+ ' Horario(s)' );
+                    $("#myModalVerMencion .modal_inicio").html('Inicio: '+ data.mention_date_start_f );
+                    $("#myModalVerMencion .modal_termino").html('Termino: '+ data.mention_date_end_f );
+                    $("#myModalVerMencion .modal_dias").html('Días: '+ data.mention_days_name );
+                
+
+                    if(data.t_mention_schedule>0){
+
+                        for (var i = 0; i < data.mention_schedule.length; i++) {
+                            var schedule = data.mention_schedule[i]
+                            //*************************************
+                            //AGREGAMOS LA INFORMACION ADICIONAL
+                            var contenido={
+                                hora        : schedule.hora,
+                                id          : schedule.id,
+                                locutor     : data.locutor,
+                            };
+                            $("#myModalVerMencion .modal_horarios").append( templateHora(contenido) );
+                            //*************************************
+                        };
+                        
+                    }
+
+                    if(data.locutor==true && typeof datos.hora!='undefined' && typeof datos.hora!='' ){
+                        $("#myModalVerMencion .modal_info_aditional").hide(1);
+
+                        if( typeof datos.status!='undefined' && datos.status=="" ){
+                            $("#myModalVerMencion .btnMarkRead").show(1);
+                            $("#myModalVerMencion .btnMarkRead").data('hora', datos.hora );
+                        }
+                    }
+
+                    //MOSTRAMOS EL BODY
+                    $("#myModalVerMencion .modal-body").fadeIn(1);
+                    setTimeout(function(){
+                        //***********************************************
+                        //DESTRUYE NANO SCROLL
+                        $(".nano").nanoScroller({ destroy: true });
+                        //INICIALIZA NANO SCROLL
+                        $(".nano").nanoScroller({alwaysVisible: true});
+                        //***********************************************
+                    },500);
+
+                }else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    $("#myModalVerMencion .imgCargando").html(template(context));
+                }
+
+            }, "json").fail(function(){
+                console.log('Error en el servidor');
+                $("#myModalVerMencion .imgCargando").empty();
+            });
+        }
+        $(document).ready(function(){
+
+            //ACTIVA EL MENU SEGUN LA URL
+            var path = window.location.pathname;
+            path = path.replace(/\/$/, "");
+            path = decodeURIComponent(path);
+            activeMenu(path);
+
+
+            //========================================================================
+            //VER TICKET
+            // $('#tablaReservas').on('click', '.linkShowTicket',function () {
+            //     var imagen_ticket   = $(this).parents('tr').find('img.img-ticket').attr('src');
+            //     var imagen_user     = $(this).parents('tr').find('img.img-user').attr('src');
+            //     var imagen_evento   = $(this).parents('tr').find('img.img-evento').attr('src');
+            //     var key_ticket      = $(this).attr('title');
+            //     var text_user       = $(this).parents('tr').find('.text-user').html();
+            //     var text_evento     = $(this).parents('tr').find('.text-evento').html();
+
+            //     $("#myModalVerTicket .modal_imagen_ticket").attr( 'src',imagen_ticket);
+            //     $("#myModalVerTicket .modal_key_ticket").text(key_ticket);
+            //     $("#myModalVerTicket .modal_text_user").html(text_user);
+            //     $("#myModalVerTicket .modal_text_evento").html(text_evento);
+            //     $("#myModalVerTicket").modal({
+            //         backdrop: 'static'
+            //     });
+            // });
+            //========================================================================
+
+            //========================================================================
+            //CUANDO SE OCULTA EL MODAL
+            $('#myModalVerMencion').on('hide.bs.modal', function () {
+
+                $("#myModalVerMencion .modal_campana").empty();
+                $("#myModalVerMencion .modal_mencion").empty();
+
+                $("#myModalVerMencion .modal_t_horarios").empty();
+                $("#myModalVerMencion .modal_inicio").empty();
+                $("#myModalVerMencion .modal_termino").empty();
+                $("#myModalVerMencion .modal_dias").empty();
+                $("#myModalVerMencion .modal_horarios").empty();
+
+                //MOSTRAMOS LA INFORMACION ADICIONAL
+                $("#myModalVerMencion .modal_info_aditional").show(1);
+                $("#myModalVerMencion .btnMarkRead").hide(1);
+                $("#myModalVerMencion .btnMarkRead").data('hora', '' );
+            });
+            //========================================================================
+
+
+            //========================================================================
+            //CUANDO SE OCULTA EL MODAL
+            $('#myModalVerPauta').on('hide.bs.modal', function () {
+
+                //OCULTAMOS EL BODY
+                $("#myModalVerPauta .modal-body").fadeIn();
+                $("#myModalVerPauta .btnMarkReadPauta").hide(1);
+                $("#myModalVerPauta .btnMarkReadPauta").data('id', '' );
+
+                $("#myModalVerPauta .modal_title_pauta").empty();
+                $("#myModalVerPauta .modal_description_pauta").empty();
+
+            });
+            //========================================================================
+        });
+    </script>
+
+    
+
+    <!-- +++++++++++++++++++++++ -->
+    <!-- plantillas -->
+    <script id="alert-template" type="text/x-handlebars-template">
+        <div class="alert {{tipo}} alert-dismissible" role="alert">
+            <button class="close" type="button" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times-circle"></i></span></button>
+            <div class="media">
+                <strong>{{{msj}}}</strong>
+            </div>
+        </div>
+    </script>
+
+    <script id="imgCargando-template" type="text/x-handlebars-template">
+        <div style='text-align: center;' class='img-responsive' ><i class="fa fa-spinner fa-pulse fa-spin fa-3x"></i></div>
+    </script>
+
+    <script id="notification-template" type="text/x-handlebars-template">
+        <h4 class="alert-title">{{{icon}}} {{{titulo}}}</h4>
+        <p class="alert-message">{{{hora}}} {{{descripcion}}}</p>
+        <!-- <div class="mar-top">
+            <a 
+                href="javascript:void(0);" 
+                style="color: #ffffff;" 
+                class="btn-link pull-right js-btn-notification" 
+                data-id={{id}} 
+                data-type="{{type_notification}}">Ver más</a>
+        </div> -->
+    </script>
+
+
+    <script id="mencion-extra-data-template" type="text/x-handlebars-template">
+        
+        <div class="pad-all bord-btm bg-gray mar-top">
+            
+            <div class="form-group">
+                <label for="mention_schedule[]" class="text-semibold">Hora *</label>
+                <div class="input-group">
+                    <input type="text" class="form-control js-mention_schedule" name="mention_schedule[]" maxlength="5" required value="{{mention_schedule}}" />
+                    <span class="input-group-addon"><i class="fa fa-clock-o fa-lg"></i></span>
+                </div>
+            </div>
+            <input type="hidden" class="form-control" name="mention_schedule_id[]" maxlength="5" required value="{{mention_schedule_id}}" />
+
+            <button type="button" class="btn btn-xs btn-danger btn-outline btn-block btnRemoveExtraData" data-hora="{{mention_schedule_id}}" title="Eliminar Información"><i class="fa fa-remove"></i> Eliminar</button>
+        </div>
+    </script>
+
+    <script id="item-hora-data-template" type="text/x-handlebars-template">
+        <li class="list-group-item">
+            {{#if locutor}}
+                <!--<button class="btn btn-success btn-xs pull-right linkLeida" data-hora="{{id}}">
+                    <i class="fa fa-check"></i>
+                </button>-->
+            {{/if}}
+            
+            <label class="text-semibold text-primary"><i class="fa fa-clock-o"></i> {{hora}}</label>
+        </li>
+    </script>
+
+
+    <!-- MODAL VER MENCION -->
+    <div id="myModalVerMencion" class="modal inmodal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">MENCIÓN</h4>
+                </div>
+                
+                <!-- ICON CARGANDO -->
+                <div class="panel-alert">
+                    <div class="imgCargando" class="alert-wrap in"></div>
+                </div>
+                <!-- /.FIN ICON CARGANDO -->
+
+                <div class="modal-body" style="display:none;">
+
+                    <div class="bootbox-body nano" style="height:500px;">
+                        <div class="media nano-content">
+                            <div class="media-body pad-all">
+                                <h4 class="text-thin"><strong class="modal_campana text-primary"></strong></h4>
+                                <h5 class="text-muted">Cliente: <strong class="modal_cliente text-info"></strong></h5>
+
+                                <div class="modal_info_aditional">
+                                    <label class="modal_t_horarios text-purple text-semibold"></label>
+                                    <br />
+                                    <label class="modal_inicio text-semibold"></label> | <label class="modal_termino text-semibold"></label>
+                                    <br />
+                                    <label class="modal_dias text-semibold"></label>
+                                    <br />
+                                </div>
+
+                                <p class="modal_mencion text-semibold font-larger mar-top bord-top pad-top">
+                                </p>
+
+                                <br />
+                                <div class="modal_info_aditional">
+                                    <h4>Horario</h4>
+                                    
+                                    <ul class="list-group modal_horarios">
+                                        <!-- AQUI HORARIOS -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" >Cerrar</button>
+                    <button type="button" class="btn btn-success btn-sm btnMarkRead" style="display:none;"><i class="fa fa-check"></i> Marcar como leida</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- MODAL VER PAUTA -->
+    <div id="myModalVerPauta" class="modal inmodal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">PAUTA</h4>
+                </div>
+                
+                <!-- ICON CARGANDO -->
+                <div class="panel-alert">
+                    <div class="imgCargando" class="alert-wrap in"></div>
+                </div>
+                <!-- /.FIN ICON CARGANDO -->
+
+                <div class="modal-body" style="display:none;">
+
+                    <div class="bootbox-body nano" style="height:500px;">
+                        <div class="media nano-content">
+                            <div class="media-body pad-all">
+                                <h4 class="text-thin"><strong class="modal_title_pauta text-primary"></strong></h4>
+
+                                
+                                <p class="modal_description_pauta text-semibold font-larger mar-top bord-top pad-top">
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" >Cerrar</button>
+                    <button type="button" class="btn btn-success btn-sm btnMarkReadPauta" style="display:none;"><i class="fa fa-check"></i> Marcar como leida</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+</html>

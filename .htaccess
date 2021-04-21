@@ -1,0 +1,14 @@
+SetEnv APPLICATION_ENV development
+RewriteEngine On
+RewriteRule ^vod/(.*)/adm/? public/vod.php?v=$1&adm=1 [NC,L]
+RewriteRule ^vod/(.*)/fast/? public/vod.php?v=$1&adm=1&fast=1 [NC,L]
+RewriteRule ^vod/(.*)/go/(.*)? public/vod.php?v=$1&g=$2 [NC,L]
+RewriteRule ^vod/(.*)? public/vod.php?v=$1 [NC,L]
+RewriteRule .* index.php
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php56” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php56 .php .php5 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

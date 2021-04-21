@@ -1,0 +1,630 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }    
+
+?>
+
+<script>
+    
+    function selectInCombo(combo,val)
+    {
+        for(var indice=0 ;indice<document.getElementById(combo).length;indice++)
+        {
+            if (document.getElementById(combo).options[indice].value==val ){
+                document.getElementById(combo).selectedIndex =indice;
+            }
+        }
+    }
+
+</script>
+
+<?php
+    $flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+
+<?php echo $flash->render('msjError',array('alert', 'alert-danger', 'alertaMSJ'));?>
+<?php echo $flash->render('msjExito',array('alert', 'alert-success', 'alertaMSJ'));?>
+
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">PAUTAS</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li></li>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+    
+    <div class="row">
+
+        
+        <div class="col-md-3">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-filter"></i> FILTRAR</h3>
+                </div>
+                <div class="panel-body">
+
+                    <?php if( (int)$this->usuario->tipo_user==1 ): ?>
+                        <div class="form-group">
+                            <label class="text-semibold">Filtrar por radio</label>
+                            <select name="filtro_radio" id="filtro_radio" class="form-control blanco" required>
+                                <option value="">Todas</option>
+                                <?php 
+                                    foreach ($this->radios as $value) {
+                                        echo '<option value="'.$value["idr"].'">'.$value["radio_name"].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="form-group">
+                        <label class="text-semibold">Día de la pauta</label>
+                        <input type="text" name="filtro_dia_pauta" id="filtro_dia_pauta" class="form-control" placeholder="<?php echo date('Y-m-d') ?>" >
+                    </div>
+
+                </div>
+
+                <div class="panel-footer clearfix">
+                    <button 
+                        class="btn btn-success btn-sm btn-block js_btnFilter" 
+                        data-loading-text="<i class='fa fa-spinner fa-pulse'></i>">
+                        <i class="fa fa-filter"></i> Buscar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        
+
+
+        <div class="col-md-9">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="panel-control">
+                        <a class="btn btn-info btn-sm pull-right btn-labeled fa fa-plus mar-top" id="nuevoRegistro" href="javascript:void(0);">Nuevo</a>
+                    </div>
+                    <h3 class="panel-title">Listado</h3>
+                </div>
+                <div class="panel-body">
+
+                        
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="tablaPautas"  cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>PAUTA</th>
+                                    <th>FECHA</th>
+                                    <th>ACCIÓN</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                        
+
+                </div><!--// fin ibox-content-->
+            </div><!--// fin ibox-->
+        </div>
+
+    </div>
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+<?php 
+    echo $this->inlineScript()->prependFile($this->basePath('js/jquery.magnific-popup.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/additional-methods.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/jquery.validate.min.js'))
+
+                                ->prependFile($this->basePath('plugins/redactor/redactor_source.js'))
+                                ->prependFile($this->basePath('plugins/redactor/redactor_imagemanager.js'))
+                                ->prependFile($this->basePath('plugins/redactor/redactor_2016.min.js'))
+
+                                ->prependFile($this->basePath('plugins/chosen/chosen.jquery.min.js'))
+
+                                ->prependFile($this->basePath('plugins/bootstrap-datepicker/bootstrap-datepicker.js'))
+                                ->prependFile($this->basePath('plugins/bootstrap-timepicker/bootstrap-timepicker.min.js'))
+
+                                ->prependFile($this->basePath('/plugins/bootstrap-select/ajax-bootstrap-select.min.js'));
+?>
+
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/css/magnific-popup.css">
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/bootstrap-select/ajax-bootstrap-select.min.css">
+<!-- redactor -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/redactor/redactor_all_2016.min.css">
+
+<!--Chosen [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath()?>/plugins/chosen/chosen.min.css" rel="stylesheet">
+
+<!--Bootstrap Timepicker [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath()?>/plugins/bootstrap-timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+
+<!--Bootstrap Datepicker [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath()?>/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet">
+
+<script type="text/javascript">
+    
+    // *****************************************************
+    //URL PAUTAS
+    var urlSaveIngPautas         = '<?php echo $this->url("pautas/pautasIngresar"); ?>';
+    var urlSaveEdiPautas         = '<?php echo $this->url("pautas/pautasEditar"); ?>';
+    var urlEliminarPautas        = '<?php echo $this->url("pautas/pautasEliminar"); ?>';
+    var urlGetDataPautas         = '<?php echo $this->url("pautas/pautasGetData"); ?>';
+    var urlFiltroPautas          = '<?php echo $this->url("pautas/pautasFiltro"); ?>';
+    var urlTablaPautas           = '<?php echo $this->url("pautas/pautasTabla"); ?>';
+    var global_isLoadTablaPautas = false;
+
+    var global_noImage='<?php echo $this->basePath()."/img/".$this->NoImage; ?>';
+
+    var global_searchTable='<?php echo addslashes($this->search); ?>';
+    var global_startTable='<?php echo $this->startTable; ?>';
+    var global_lengthTable='<?php echo $this->lengthTable; ?>';
+    var global_orderTable='<?php echo $this->orderTable; ?>';
+    var global_orderDirTable='<?php echo ($this->order_dirTable==null)?"desc":$this->order_dirTable; ?>';
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++
+    // LIMPIA EL FORMULARIO
+    function clearForm()
+    {
+        document.getElementById("savePauta").reset();
+        $("#pauta").val("0");
+        $(".imgCargando").empty();
+    }
+
+    function clearClassRow(){
+        $("#tablaPautas tr").removeClass("danger");
+        $("#tablaPautas tr").removeClass("info");
+    }
+
+    // +++++++++++++++++++++++++++++++++++++++++++
+    // ENVIA LOS DATOS DE ING-EDIT
+    function sendDataAjax(url, formData, cargando, $btn)
+    {
+        var source       = $("#alert-template").html();
+        var template     = Handlebars.compile(source);
+        var sourceCarg   = $("#imgCargando-template").html();
+        var templateCarg = Handlebars.compile(sourceCarg);
+        var parent       = cargando.parents('.modal');
+        $.ajax({
+            url: url, 
+            dataType: "json",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                var contextCarg = { };
+                cargando.html(templateCarg(contextCarg));
+                $btn.button('loading');
+            },
+            success: function(data){
+                $btn.button('reset');
+
+                if(data.status=='ok'){
+
+                    var context = {msj: data.msj, tipo: "alert-success" };
+                    cargando.html(template(context));
+
+                    
+                    setTimeout(function(){
+                        $("#myModalPautas").modal('hide');
+                    },1000);
+                    $('#tablaPautas').DataTable().draw(false);
+                }
+                else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    cargando.html(template(context));
+                }
+            },
+            error: function(){
+                $btn.button('reset');
+                var context = {msj: "Ocurrio un error procesando los datos.", tipo: "alert-danger" };
+                cargando.html(template(context));
+            }
+            
+        });
+    }
+
+    function loadDataTablaPautas(){
+        
+        if( global_isLoadTablaPautas==true ){
+            $('#tablaPautas').DataTable().destroy();
+        }
+
+        $('#tablaPautas').DataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": urlTablaPautas,
+            "columns": [
+                { "data": "nombre" },
+                { "data": "fecha" },
+                { "data": "version" }
+            ],
+            "columnDefs": [ { 
+                        "targets": 2, 
+                        "orderable": false 
+            } ],
+            "iDisplayStart": parseInt(global_startTable),
+            "iDisplayLength": parseInt(global_lengthTable),
+            "oSearch": {"sSearch": global_searchTable},
+            "order": [ parseInt(global_orderTable), global_orderDirTable ],
+            responsive: true,
+                "dom": 'T<"clear">lfrtip',
+                "tableTools": {
+                    "sSwfPath": "<?php echo $this->basePath()?>/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+            },
+            "fnServerParams": function (aoData) { 
+                aoData.push({ "name": 'radio', "value": $("#filtro_radio").val() });
+                aoData.push({ "name": 'filtro_dia_pauta', "value": $("#filtro_dia_pauta").val() });
+            },
+            "oLanguage": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior",
+                },
+                "fnInfoCallback": null,
+            },
+            "fnDrawCallback": function( oSettings ) {
+                // -------------------------------------------------
+                // TOOLTIP DE LOS BOTONES
+                $('[data-toggle="tooltip"]').tooltip({ html:true });
+
+                $("img.lazy").lazyload({
+                    effect: "fadeIn"
+                });
+
+                $(".js_btnFilter").button('reset');
+            }
+        });
+        
+    }
+
+
+
+    $(document).ready(function(){
+
+
+        var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+        var sourceCarg   = $("#imgCargando-template").html();
+        var templateCarg = Handlebars.compile(sourceCarg);
+
+
+
+        $('.alertaMSJ').delay(2500).slideToggle(2500);
+
+        
+        //=========================================================
+        loadDataTablaPautas();
+        global_isLoadTablaPautas=true;
+
+
+        //*****************************************************************************
+        //FILTRAR
+        $(".js_btnFilter").click(function(){
+            $(".js_btnFilter").button('loading');
+            loadDataTablaPautas();
+        });
+        //*****************************************************************************
+
+
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // NUEVA
+        $(document).on( "click", "#nuevoRegistro", function() {
+            $("#savePauta").attr('action', urlSaveIngPautas);
+            $('#myModalPautas').modal({
+                backdrop: 'static'
+            });
+            clearForm();
+            $("#myModalPautas .modal-title").text("Nueva Pauta");
+        });
+
+        $('#myModalPautas').on('hide.bs.modal', function () {
+            $("#dia_pauta").datepicker('setDate', '' );
+            clearClassRow();
+            clearForm();
+
+            //DEJAMOS LA IMAGEN POR DEFECTO
+            $('#myModalPautas .img-preview').attr('src',global_noImage)
+                .fadeIn();
+        });
+
+
+        // BOOTSTRAP TIMEPICKER - COMPONENT
+        // =================================================================
+        // Require Bootstrap Timepicker
+        // http://jdewit.github.io/bootstrap-timepicker/
+        // =================================================================
+        $('#hora_pauta').timepicker({
+            minuteStep: 5,
+            showInputs: false,
+            disableFocus: true,
+            maxHours        : 24,
+            defaultTime     : 'current',
+            showMeridian    : false,
+            appendWidgetTo  : $("#myModalPautas"),
+
+        });
+
+
+        // BOOTSTRAP DATEPICKER
+        // =================================================================
+        // Require Bootstrap Datepicker
+        // http://eternicode.github.io/bootstrap-datepicker/
+        // =================================================================
+        $('#dia_pauta, #filtro_dia_pauta').datepicker({
+            format          : "yyyy-mm-dd",
+            todayBtn        : "linked",
+            autoclose       : true,
+            todayHighlight  : true,
+            language        : 'es',
+            clearBtn        : true,
+            container       : $("#myModalPautas")
+        }).on('hide.bs.modal', function(event){
+            //AL CERRARSE EL MODAL DE LAS FECHAS, EJECUTABA FUNCIONES QUE SE EJECUTAN AL CERRAR EL MODAL DE RESERVA
+            //POR ESTO SE DETIENE LA PROPAGACION DEL EVENTO HIDE
+            event.stopPropagation();
+        });;
+
+
+
+
+        // ++++++++++++++++++++++++++++++++++++++++++++++
+        // INGRESA 
+        var optionRules={
+        };
+        var messagesRules={
+            title_pauta: {
+                required: "Este campo es requerido.",
+                maxlength:"Debe ingresar menos de {0} caracteres."
+            },
+            dia_pauta: {
+                required: "Este campo es requerido.",
+                maxlength:"Debe ingresar menos de {0} caracteres."
+            },
+            hora_pauta: {
+                required: "Este campo es requerido.",
+                maxlength:"Debe ingresar menos de {0} caracteres."
+            },
+            radio:{
+                required: "Este campo es requerido.",
+            }
+            // client_slug: {
+            //     required: "Este campo es requerido.",
+            //     maxlength:"Debe ingresar menos de {0} caracteres."
+            // },
+        };
+        $("#savePauta").validate({
+            option:optionRules,
+            messages:messagesRules,
+            highlight: function(element, errorClass){ 
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(element, errorClass){ 
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function(form){
+
+                var formData = new FormData( $("#savePauta")[0] );
+                sendDataAjax( $("#savePauta").attr("action") , formData, $("#myModalPautas .imgCargando"), $("#myModalPautas .btnSave"));
+            }
+        });
+
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // LOAD DATOS PARA EDITAR REGION
+        $( "#tablaPautas" ).on( "click", ".linkEditar", function() {
+
+            clearForm();
+            var data = $(this).attr('data');
+            $("#tablaPautas #row_"+data).addClass("info");
+
+            $("#savePauta").attr('action', urlSaveEdiPautas);
+            $('#myModalPautas').modal({
+                backdrop: 'static'
+            });
+            // +++++++++++++++++++++++++++++++++++++
+            $("#myModalPautas .modal-title").text("Editar Pauta");
+
+            // ++++++++++++++++++++++++++++++++++++++
+            // MENSAJE CARGANDO
+            $("#myModalPautas .imgCargando").html(templateCarg( {} ));
+
+
+            // ----------------------------------------------
+            // ENVIA PETICION
+            $.post( urlGetDataPautas, { pauta: data }, function( data ) {
+
+                $("#myModalPautas .imgCargando").empty();
+                if (data.status=="ok") {
+                    
+                    $("#title_pauta").val( data.pauta.title_pauta );
+                    $("#descripcion_pauta").val( data.pauta.descripcion_pauta );
+                    $("#pauta").val( data.pauta.id );
+                    $("#dia_pauta").val( data.pauta.dia_pauta );
+                    $("#dia_pauta").datepicker('setDate', data.pauta.dia_pauta );
+
+                    $("#hora_pauta").val( data.pauta.hora_pauta_f );
+
+                    if( $("#radio")[0] && typeof data.pauta.radio!='undefined' && data.pauta.radio.id!='undefined' ){
+                        $("#radio").val( data.pauta.radio.id );
+                    }
+
+
+                }else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    $("#myModalPautas .imgCargando").html(template(context));
+                }
+
+            }, "json").fail(function(){
+                console.log('Error en el servidor');
+                $("#myModalPautas .imgCargando").empty();
+            });
+        });
+
+        
+        //========================================================================
+        //ELIMINA
+        $('#tablaPautas').on('click', '.linkEliminar',function () {
+            var id=$(this).attr('data');
+            $("#tablaPautas #row_"+id).addClass("danger");
+            swal({
+                title: "¿Eliminar?",
+                text: "¿Estas seguro de eliminar esta pauta?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si, Eliminar",
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.post( urlEliminarPautas, { pauta: id }, function( data ) {
+                        if (data.status=="ok") {
+
+                            swal("Eliminado!", data.msj, "success");
+                            setTimeout(function(){
+                                $('#tablaPautas').DataTable().draw(false);
+                            }, 700);
+                            clearClassRow();
+                        }
+                        else{
+                            swal("Error", data.msj, "error");
+                            clearClassRow();
+                        }
+                        
+                    }, "json").fail(function(){
+                        clearClassRow();
+                        console.log('Error en el server');
+                        swal("Error", 'Error en el servidor (contacte a su administrador).', "error");
+                    });
+                }
+                else{
+                    clearClassRow();
+                }
+                
+            });
+        });
+        
+
+    });
+
+</script>
+
+<!-- MODAL PAUTAS -->
+<div id="myModalPautas" class="modal inmodal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <!-- ICON CARGANDO -->
+            <div class="panel-alert">
+                <div class="imgCargando" class="alert-wrap in"></div>
+            </div>
+            <!-- /.FIN ICON CARGANDO -->
+            
+            <form id="savePauta" action="" method="POST" enctype="multipart/form-data">
+
+                <div class="modal-body" >
+                    
+                    <div class="form-group">
+                        <label for="title_pauta" class="text-semibold">Nombre *</label>
+                        <input type="text" class="form-control" name="title_pauta" id="title_pauta" maxlength="200" required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dia_pauta" class="text-semibold">Fecha de la pauta *</label>
+                                <input type="text" class="form-control" name="dia_pauta" id="dia_pauta" maxlength="200" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="hora_pauta" class="text-semibold">Hora de la pauta *</label>
+                                <input type="text" class="form-control" name="hora_pauta" id="hora_pauta" maxlength="200" required />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <?php if( (int)$this->usuario->tipo_user==1 ): ?>
+                        <div class="form-group js_input_radio">
+                            <label class="text-semibold">Radio <span class="label-required">*</span></label>
+                            <select name="radio" id="radio" class="form-control blanco" required>
+                                <option value="">Seleccione...</option>
+                                <?php 
+                                    foreach ($this->radios as $value) {
+                                        echo '<option value="'.$value["idr"].'">'.$value["radio_name"].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="form-group">
+                        <label for="descripcion_pauta" class="text-semibold">Descripción de la pauta</label>
+                        <textarea name="descripcion_pauta" id="descripcion_pauta" class="form-control" cols="30" rows="10"></textarea>
+                    </div>
+
+                            
+                    <input type="hidden" value="0" id="pauta" name="pauta" />
+                    <br>
+
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" >Cerrar</button>
+                    <button 
+                        class="btn btn-primary btn-sm btnSave" 
+                        data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando">
+                        <i class="fa fa-floppy-o"></i> Guardar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+

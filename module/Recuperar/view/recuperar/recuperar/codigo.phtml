@@ -1,0 +1,76 @@
+<?php 
+  if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+?>
+
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $('#alertaMSJ').delay(2000).slideToggle(2500);
+
+    });
+</script>
+
+<?php
+$flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+
+<!-- LOGIN FORM -->
+<!--===================================================-->
+<div class="cls-content">
+    <div class="cls-content-sm panel">
+        <div class="panel-body">
+            <p class="pad-btm">Ingresa tu Correo y tu nueva contraseña para finalizar el cambio.</p>
+            
+            <?php echo $flash->render('msjExito',array('alert', 'alert-success', 'alertaMSJ'));?> 
+            <?php echo $flash->render('msjError',array('alert', 'alert-danger', 'alertaMSJ'));?> 
+            <?php 
+                if ($this->msj!="") {
+                    echo "<div  id='alertaMSJ' class='alert alert-danger alertaMSJ' role='alert'>".$this->msj."
+                          </div>";
+                }
+            ?>
+
+            <form name="formularioRecuperar" action="<?php echo $this->ruta; ?>" method="POST">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                        <input class="input form-control" type="text" placeholder="Correo" maxlength="60" name="correoUser" id="correoUser" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                        <input class="input form-control" type="password" placeholder="Nueva Contraseña" maxlength="100" name="passUser" id="passUser" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                        <input class="input form-control" type="password" placeholder="Repita Contraseña" maxlength="100" name="passUserNueva" id="passUserNueva" required>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-xs-4 col-xs-offset-4">
+                        <div class="form-group text-right">
+                        <button class="btn btn-primary text-uppercase" name="btnCambiar" id="btnCambiar" type="submit"><span class="glyphicon glyphicon-refresh"></span> Cambiar</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <div class="pad-ver">
+        <a class="btn-link mar-rgt" href="<?=$this->url("login")?>"><span class="glyphicon glyphicon-arrow-left"></span> Volver al login</a>
+    </div>
+</div>
+<!--===================================================-->

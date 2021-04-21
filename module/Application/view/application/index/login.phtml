@@ -1,0 +1,56 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }  
+
+
+	$flash=$this->flashMessenger()
+    	        ->setMessageOpenFormat('<div%s id="alertaMSJ" ><strong>')
+        	    ->setMessageSeparatorString('')
+            	->setMessageCloseString('</strong></div>');    
+?>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.alertaMSJ').delay(2500).slideToggle(2500);
+	});
+</script>
+
+
+<!-- LOGIN FORM -->
+<!--===================================================-->
+<div class="cls-content">
+    <div class="cls-content-sm panel">
+        <div class="panel-body">
+            <p class="pad-btm">Por favor ingresa tus datos para continuar.</p>
+            <?php echo $flash->render('msjExito',array('alert', 'alert-success', 'alertaMSJ'));?> 
+            <?php echo $flash->render('msjError',array('alert', 'alert-danger', 'alertaMSJ'));?> 
+            <form action="" method="POST">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                        <input type="email" class="form-control" name="correoUser" id="correoUser" placeholder="Correo" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                        <input type="password" class="form-control" maxlength="100" name="passwordUser" id="passwordUser"  placeholder="Password" required="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4 col-xs-offset-8">
+                        <div class="form-group text-right">
+                        <button type="submit" class="btn btn-success btn-block text-uppercase">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="pad-ver">
+        <a href="<?php echo $this->url("recuperar")?>" class="btn-link mar-rgt">Olvidaste tu contraseña?</a>
+    </div>
+</div>
+<!--===================================================-->
+

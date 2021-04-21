@@ -1,0 +1,105 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+?>
+
+<?php
+	$flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+
+
+<div class="normalheader transition animated fadeIn">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+
+            <div id="hbreadcrumb" class="pull-right m-t-lg">
+                <ol class="hbreadcrumb breadcrumb">
+                    
+                </ol>
+            </div>
+            <h2 class="font-light m-b-xs">
+                INICIO
+            </h2>
+        </div>
+    </div>
+</div>
+
+<?php echo $flash->render('msjError',array('alert', 'alert-danger'));?>
+<?php echo $flash->render('msjExito',array('alert', 'alert-success'));?>
+
+<div class="content animate-panel">
+    
+    <!-- <div class="row"> -->
+    <?php 
+        $cont=1; 
+        $dentro=false;
+    ?>
+    <?php foreach ($clientes as $value) { ?>
+        <?php 
+            if($cont==1){
+                echo "<div class='row'>";
+                $dentro=true;
+            }
+        ?>
+
+        <div class="col-lg-3">
+            <div class="hpanel hgreen contact-panel">
+                <div class="panel-body">
+                    <div class="project-action pull-right m-t-md">
+                        <div class="btn-group">
+                            <a href="<?php echo $this->url('editarcli').'/'.$value["idc"] ?>" class="btn btn-success btn-xs">Ver Ficha</a>
+                            <a href="<?php echo $this->url('files').'?cliente='.$value["idc"]; ?>" class="btn btn-primary btn-xs ">Ver Archivos</a>
+                        </div>
+                    </div>
+                    <!-- <span class="label label-success pull-right">NEW</span> -->
+                    <img alt="logo" class="img-circle m-b" src="<?php echo $this->escapeHTML($value["logo"]); ?>">
+                    <h3><a href=""> <?php echo $this->escapeHTML($value["name"]); ?> </a></h3>
+                    <p>
+                        <?php echo $value["description"]; ?>
+                    </p>
+                </div>
+                <div class="panel-footer contact-footer">
+                    <div class="row">
+                        <div class="col-md-4 border-right"> 
+                            <div class="contact-stat"><span>Categorias: </span> <strong><?php echo $value["total_cats"] ?></strong></div> 
+                        </div>
+                        <div class="col-md-4 border-right"> 
+                            <div class="contact-stat"><span>Archivos: </span> <strong><?php echo $value["total_files"] ?></strong></div> 
+                        </div>
+                        <div class="col-md-4 "> 
+                            <div class="contact-stat"><span>Total: </span> <strong>$ <?php echo number_format($value["total_valor"],0, '','.') ?></strong></div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <?php 
+        if($cont>=4){
+            echo "</div>";
+            $cont=1;
+            $dentro=false;
+        }
+        else{
+            $cont++;
+        }
+    ?>
+    <?php 
+        } 
+        if($cont<4 and $dentro==true){
+            echo "</div>";
+        }
+    ?> 
+    <!-- </div> -->
+
+</div>

@@ -1,0 +1,22 @@
+.popover.fade{
+    max-width: 500px;
+    font-size: 15px;
+    font-weight: 600;
+}
+.font-larger{
+    font-size: larger;
+}
+
+#myModalVerMencion{
+    font-size: 15px !important;
+}
+.btn-sm{
+	font-size: 11px !important;
+}
+.tooltip{
+	z-index: 9999999 !important;
+}
+
+.fc-toolbar .fc-state-active, .fc-toolbar .ui-state-active{
+	z-index: 1 !important;
+}

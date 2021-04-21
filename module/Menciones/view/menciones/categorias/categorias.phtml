@@ -1,0 +1,554 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }
+?>
+
+<script>    
+    function selectInCombo(combo,val)
+    {
+        for(var indice=0 ;indice<document.getElementById(combo).length;indice++)
+        {
+            if (document.getElementById(combo).options[indice].value==val ){
+                document.getElementById(combo).selectedIndex =indice;
+            }
+        }
+    }
+</script>
+
+<?php
+    $flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+<?php echo $flash->render('msjError',array('alert', 'alert-danger', 'alertaMSJ'));?>
+<?php echo $flash->render('msjExito',array('alert', 'alert-success', 'alertaMSJ'));?>
+
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">CATEGORÍAS</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li></li>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+
+    <div class="panel">
+        <div class="panel-heading">
+            <div class="panel-control">
+                <a class="btn btn-info btn-sm pull-right btn-labeled fa fa-plus mar-top" id="nuevoRegistro" href="javascript:void(0);">Nueva</a>
+                <!-- <a href="<?php //echo $this->url('clientes/clientesExportar'); ?>" target="_blank" class="btn btn-success btn-sm pull-right btn-labeled fa fa-download mar-top" id="importarExcel">Exportar Clientes</a> -->
+            </div>
+            <h3 class="panel-title">Listado</h3>
+        </div>
+        <div class="panel-body">
+
+            <!-- <?php if( (int)$this->usuario->tipo_user==1 ): ?>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-6">
+                        
+                        <div class="form-group">
+                            <label class="text-semibold">Filtrar por radio</label>
+                            <select name="filtro_radio" id="filtro_radio" class="form-control blanco" required>
+                                <option value="">Todas</option>
+                                <?php 
+                                    foreach ($this->radios as $value) {
+                                        echo '<option value="'.$value["idr"].'">'.$value["radio_name"].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            <?php endif; ?> -->
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="tablaCategorias"  cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>CATEGORÍA</th>
+                            <th>FECHA REGISTRO</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div><!--// fin ibox-content-->
+    </div><!--// fin ibox-->
+
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+<?php 
+    echo $this->inlineScript()->prependFile($this->basePath('js/jquery.magnific-popup.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/additional-methods.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/jquery.validate.min.js'))
+
+                                ->prependFile($this->basePath('plugins/redactor/redactor_source.js'))
+                                ->prependFile($this->basePath('plugins/redactor/redactor_imagemanager.js'))
+                                ->prependFile($this->basePath('plugins/redactor/redactor_2016.min.js'))
+
+                                ->prependFile($this->basePath('plugins/chosen/chosen.jquery.min.js'))
+
+                                ->prependFile($this->basePath('/plugins/bootstrap-select/ajax-bootstrap-select.min.js'));
+?>
+
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/css/magnific-popup.css">
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/bootstrap-select/ajax-bootstrap-select.min.css">
+<!-- redactor -->
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/redactor/redactor_all_2016.min.css">
+
+<!--Chosen [ OPTIONAL ]-->
+<link href="<?php echo $this->basePath()?>/plugins/chosen/chosen.min.css" rel="stylesheet">
+
+<script type="text/javascript">
+    
+    // *****************************************************
+    //URL CATEGORÍAS
+    var urlSaveIngCategorias          ='<?php echo $this->url("categorias/categoriasIngresar"); ?>';
+    var urlSaveEdiCategorias          ='<?php echo $this->url("categorias/categoriasEditar"); ?>';
+    var urlEliminarCategorias         ='<?php echo $this->url("categorias/categoriasEliminar"); ?>';
+    var urlGetDataCategorias          ='<?php echo $this->url("categorias/categoriasGetData"); ?>';
+    var urlAutocompleteCategorias     ='<?php echo $this->url("categorias/categoriasAutorcomplete"); ?>';
+    var urlTablaCategorias            ='<?php echo $this->url("categorias/categoriasTabla"); ?>';
+    var global_isLoadTablaCategorias  =false;
+
+    var global_noImage='<?php echo $this->basePath()."/img/".$this->NoImage; ?>';
+
+    var global_searchTable='<?php echo addslashes($this->search); ?>';
+    var global_startTable='<?php echo $this->startTable; ?>';
+    var global_lengthTable='<?php echo $this->lengthTable; ?>';
+    var global_orderTable='<?php echo $this->orderTable; ?>';
+    var global_orderDirTable='<?php echo ($this->order_dirTable==null)?"desc":$this->order_dirTable; ?>';
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++
+    // LIMPIA EL FORMULARIO
+    function clearForm()
+    {
+        document.getElementById("saveCategorias").reset();
+        $("#categoriaHidden").val("0");
+        $(".imgCargando").empty();
+    }
+
+    function clearClassRow(){
+        $("#tablaCategorias tr").removeClass("danger");
+        $("#tablaCategorias tr").removeClass("info");
+    }
+
+    // +++++++++++++++++++++++++++++++++++++++++++
+    // ENVIA LOS DATOS DE ING-EDIT
+    function sendDataAjax(url, formData, cargando, $btn)
+    {
+        var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+        var sourceCarg   = $("#imgCargando-template").html();
+        var templateCarg = Handlebars.compile(sourceCarg);
+        var parent=cargando.parents('.modal');
+        $.ajax({
+            url: url, 
+            dataType: "json",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                var contextCarg = { };
+                cargando.html(templateCarg(contextCarg));
+                $btn.button('loading');
+            },
+            success: function(data){
+                $btn.button('reset');
+
+                if(data.status=='ok'){
+
+                    var context = {msj: data.msj, tipo: "alert-success" };
+                    cargando.html(template(context));
+
+                    if( parent.attr('id')=='myModalImportarExcel' ){
+                        $("#myModalImportarExcel .btn-cerrar-importacion").prop('disabled', false);
+                        setTimeout(function(){
+                            $("#myModalImportarExcel").modal('hide');
+                        },900);
+                    }
+                    else{
+                        setTimeout(function(){
+                            $("#myModalCategorias").modal('hide');
+                        },900);
+                    }
+
+                    if(global_isLoadTablaCategorias==true){
+                        $('#tablaCategorias').DataTable().draw(false);
+                    }
+                }
+                else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    cargando.html(template(context));
+
+                    //SI RETORNAMOS UN MENSAJE DE ERROR AL MOMENTO DE IMPORTAR
+                    if( parent.attr('id')=='myModalImportarExcel' ){
+                        $("#myModalImportarExcel .btn-cerrar-importacion").prop('disabled', false);
+                    }
+                }
+            },
+            error: function(){
+                $btn.button('reset');
+                var context = {msj: "Ocurrio un error procesando los datos.", tipo: "alert-danger" };
+                cargando.html(template(context));
+
+                //SI OCURRIO UN ERROR AL MOMENTO DE IMPORTAR
+                if( parent.attr('id')=='myModalImportarExcel' ){
+                    $("#myModalImportarExcel .btn-cerrar-importacion").prop('disabled', false);
+                }
+            }
+            
+        });
+    }
+
+    function loadDataTablaCategorias(){
+        
+        if( global_isLoadTablaCategorias==true ){
+            $('#tablaCategorias').DataTable().destroy();
+        }
+
+        $('#tablaCategorias').DataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": urlTablaCategorias,
+            "columns": [
+                { "data": "nombre" },
+                { "data": "fecha" },
+                { "data": "version" }
+            ],
+            "columnDefs": [ { 
+                        "targets": 2, 
+                        "orderable": false 
+            } ],
+            "iDisplayStart": parseInt(global_startTable),
+            "iDisplayLength": parseInt(global_lengthTable),
+            "oSearch": {"sSearch": global_searchTable},
+            "order": [ parseInt(global_orderTable), global_orderDirTable ],
+            responsive: true,
+                "dom": 'T<"clear">lfrtip',
+                "tableTools": {
+                    "sSwfPath": "<?php echo $this->basePath()?>/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+            },
+            // "fnServerParams": function (aoData) { 
+            //     aoData.push({ "name": 'radio', "value": radio });
+            // },
+            "oLanguage": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior",
+                },
+                "fnInfoCallback": null,
+            },
+            "fnDrawCallback": function( oSettings ) {
+                // -------------------------------------------------
+                // TOOLTIP DE LOS BOTONES
+                $('[data-toggle="tooltip"]').tooltip({ html:true });
+
+                $("img.lazy").lazyload({
+                    effect: "fadeIn"
+                });
+            }
+        });        
+    }
+
+    function changeNameSlug(){
+        var value = $.trim($(this).val());
+        value = value.replace(/ /g, "-");
+        // $("input[name='client_slug']").val(value.toLowerCase());
+    }
+
+    $(document).ready(function(){
+
+        var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+        var sourceCarg   = $("#imgCargando-template").html();
+        var templateCarg = Handlebars.compile(sourceCarg);
+
+        $('.alertaMSJ').delay(2500).slideToggle(2500);
+        
+        //=========================================================
+        // loadDataTablaCategorias('');
+        // global_isLoadTablaCategorias=true;
+        // if( $("#filtro_radio")[0] ){
+        //     $("#filtro_radio").on('change', function(){
+        //         loadDataTablaCategorias( $(this).val() );
+        //     });
+        // }
+
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // NUEVA
+        $(document).on( "click", "#nuevoRegistro", function() {
+            $("#saveCategorias").attr('action', urlSaveIngCategorias);
+            $('#myModalCategorias').modal({
+                backdrop: 'static'
+            });
+            clearForm();
+            $("#myModalCategorias .modal-title").text("Nueva Categoría");
+        });
+
+        $('#myModalCategorias').on('hide.bs.modal', function () {
+            clearClassRow();
+            clearForm();
+
+            //habilitamos el campo slug y le agregamos el evento change (se lo quitamos al abrir modal en modo edicion)
+            // $("input[name='client_name']").on('change',changeNameSlug);
+            // $("input[name='client_slug']").prop('disabled', false);
+
+            //DEJAMOS LA IMAGEN POR DEFECTO
+            $('#myModalCategorias .img-preview').attr('src',global_noImage)
+                .fadeIn();
+        });
+
+        //=========================================================
+        // FORMATEA EL NOMBRE Y LOS PONE EN EL INPUT SLUG
+        // UTILIZA LA FUNCION "CHANGENAMESLUG" PARA REALIZAR ESTO
+        // $("input[name='client_name']").on('change',changeNameSlug);
+        //===============================================
+        // $("input[name='client_slug']").change(function () {
+        
+        //     var value = $.trim($(this).val());
+        //     value = value.replace(/ /g, "-");
+        //     $("input[name='client_slug']").val(value.toLowerCase());
+        // });
+        // -- FIN FORMATEA titulo
+
+        // ++++++++++++++++++++++++++++++++++++++++++++++
+        // INGRESA 
+        var optionRules={
+        };
+        var messagesRules={
+            category_name: {
+                required: "Este campo es requerido.",
+                maxlength:"Debe ingresar menos de {0} caracteres."
+            },
+            // radio:{
+            //     required: "Este campo es requerido.",
+            // }
+            // client_slug: {
+            //     required: "Este campo es requerido.",
+            //     maxlength:"Debe ingresar menos de {0} caracteres."
+            // },
+        };
+        $("#saveCategorias").validate({
+            option:optionRules,
+            messages:messagesRules,
+            highlight: function(element, errorClass){ 
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(element, errorClass){ 
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function(form){
+
+                var formData = new FormData( $("#saveCategorias")[0] );
+                sendDataAjax( $("#saveCategorias").attr("action") , formData, $("#myModalCategorias .imgCargando"), $("#myModalCategorias .btnSave"));
+            }
+        });
+
+        // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // LOAD DATOS PARA EDITAR REGION
+        $( "#tablaCategorias" ).on( "click", ".linkEditar", function() {
+            
+            // var source   = $("#icon-selected-template").html();
+            // var template = Handlebars.compile(source);
+
+            clearForm();
+            var data=$(this).attr('data');
+            $("#tablaCategorias #row_"+data).addClass("info");
+
+            $("#saveCategorias").attr('action', urlSaveEdiCategorias);
+            $('#myModalCategorias').modal({
+                backdrop: 'static'
+            });
+            // +++++++++++++++++++++++++++++++++++++
+            $("#myModalCategorias .modal-title").text("Editar Categoría");
+
+            // ++++++++++++++++++++++++++++++++++++++
+            // MENSAJE CARGANDO
+            $("#myModalCategorias .imgCargando").html(templateCarg( {} ));
+
+            //deshabilitamos el campo slug y le quitamos el evento change (se lo volvemos a agregar al cerrar modal)
+            // $("input[name='client_slug']").prop('disabled', true);
+            // $("input[name='client_name']").off('change',changeNameSlug);
+
+            // ----------------------------------------------
+            // ENVIA PETICION
+            $.post( urlGetDataCategorias, { categoria: data }, function( data ) {
+
+                $("#myModalCategorias .imgCargando").empty();
+                if (data.status=="ok") {
+                    
+                    $("#category_name").val( data.category_name );
+                    // $("#client_slug").val( data.client_slug );
+
+                    $("#categoriaHidden").val( data.id );
+                    // if( $("#radio")[0] && typeof data.radio!='undefined' && data.radio.id!='undefined' ){
+                    //     selectInCombo('radio', data.radio.id);
+                    // }
+
+                }else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    $("#myModalCategorias .imgCargando").html(template(context));
+                }
+
+            }, "json").fail(function(){
+                console.log('Error en el servidor');
+                $("#myModalCategorias .imgCargando").empty();
+            });
+        });
+        
+        //========================================================================
+        //ELIMINA
+        $('#tablaCategorias').on('click', '.linkEliminar',function () {
+            var id=$(this).attr('data');
+            $("#tablaCategorias #row_"+id).addClass("danger");
+            swal({
+                title: "¿Eliminar?",
+                text: "Estás seguro de eliminar esta categoría?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.post( urlEliminarCategorias, { categoria: id }, function( data ) {
+                        if (data.status=="ok") {
+
+                            swal("Eliminado!", data.msj, "success");
+                            setTimeout(function(){
+                                $('#tablaCategorias').DataTable().draw(false);
+                            }, 700);
+                            clearClassRow();
+                        }
+                        else{
+                            swal("Error", data.msj, "error");
+                            clearClassRow();
+                        }
+                        
+                    }, "json").fail(function(){
+                        clearClassRow();
+                        console.log('Error en el server');
+                        swal("Error", 'Error en el servidor (contacte a su administrador).', "error");
+                    });
+                }
+                else{
+                    clearClassRow();
+                }
+                
+            });
+        });
+    });
+
+</script>
+
+<!-- MODAL CATEGORÍAS -->
+<div id="myModalCategorias" class="modal inmodal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <!-- ICON CARGANDO -->
+            <div class="panel-alert">
+                <div class="imgCargando" class="alert-wrap in"></div>
+            </div>
+            <!-- /.FIN ICON CARGANDO -->
+            
+            <form id="saveCategorias" action="" method="POST" enctype="multipart/form-data">
+
+                <div class="modal-body" >
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br />
+                            <div class="form-group">
+                                <label for="category_name" class="text-semibold">Nombre categoría*</label>
+                                <input type="text" class="form-control" name="category_name" id="category_name" maxlength="200" required />
+                            </div>
+                            
+                            <!-- <?php if( (int)$this->usuario->tipo_user==1 ): ?>
+                                <div class="form-group js_input_radio">
+                                    <label class="text-semibold">Radio <span class="label-required">*</span></label>
+                                    <select name="radio" id="radio" class="form-control blanco" required>
+                                        <option value="">Seleccione...</option>
+                                        <?php 
+                                            foreach ($this->radios as $value) {
+                                                echo '<option value="'.$value["idr"].'">'.$value["radio_name"].'</option>';
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                            <?php endif; ?> -->
+
+                            <!-- <div class="form-group">
+                                <label for="client_slug" class="text-semibold">Slug *</label>
+                                <input type="text" class="form-control" name="client_slug" id="client_slug" maxlength="200" required />
+                            </div> -->
+                                    
+                            <input type="hidden" value="0" id="categoriaHidden" name="categoriaHidden" />
+                            <br />
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" >Cerrar</button>
+                    <button 
+                        class="btn btn-primary btn-sm btnSave" 
+                        data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando">
+                        <i class="fa fa-floppy-o"></i> Guardar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

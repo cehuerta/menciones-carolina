@@ -1,0 +1,330 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+
+?>
+
+
+<?php
+	$flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+
+<?php echo $flash->render('msjError',array('alert', 'alert-danger'));?>
+<?php echo $flash->render('msjExito',array('alert', 'alert-success'));?>
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">USUARIOS</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li></li>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+
+
+    <div class="panel">
+        <div class="panel-heading">
+            <div class="panel-control">
+                <a class="btn btn-info btn-sm pull-right btn-labeled fa fa-plus mar-top" href="<?=$this->url("ingresaradm")?>">Nuevo</a>
+            </div>
+            <h3 class="panel-title">Usuarios</h3>
+        </div>
+        <div class="panel-body">
+
+            <?php if( (int)$this->usuario->tipo_user==1 ): ?>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-6">
+                        
+                        <div class="form-group">
+                            <label class="text-semibold">Filtrar por radio</label>
+                            <select name="filtro_radio" id="filtro_radio" class="form-control blanco" required>
+                                <option value="">Todas</option>
+                                <?php 
+                                    foreach ($this->radios as $value) {
+                                        echo '<option value="'.$value["idr"].'">'.$value["radio_name"].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            <?php endif; ?>
+
+    		<div class="table-responsive">
+                <table id="personal" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                        	<th>ID</th>
+                            <th style="width:120px;">LOGO</th>
+                            <th>NOMBRE</th>
+                            <th>CORREO</th>
+                            <th>TIPO</th>
+                            <th>FECHA REGISTRO</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+                                
+                    <tbody>
+
+                    </tbody>
+
+
+            	</table>
+        	</div>
+        </div>
+    </div>
+
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+
+<?php 
+    echo  $this->inlineScript()->prependFile($this->basePath('/js/jquery.magnific-popup.min.js'))
+                                ->prependFile($this->basePath('/js/handlebars-v3.0.0.js'))
+        ;
+?>
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/css/magnific-popup.css">
+
+<script type="text/javascript">
+    var global_isLoadTablaUsuario = false;
+    var global_urlUsuario         = '<?php echo $this->url("tablausuarios"); ?>';
+
+    var userGlobal = '<?php echo addslashes($this->user); ?>';
+    var startTable = '<?php echo $this->startTable; ?>';
+    var length     = '<?php echo $this->length; ?>';
+    
+
+    function clearClassRow(){
+        $("#personal tr").removeClass("danger");
+    }
+
+    function loadDataTablaUsuario( radio ){
+
+        if( global_isLoadTablaUsuario==true ){
+            $('#personal').DataTable().destroy();
+        }
+
+        var tablaPersonal=$('#personal').DataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": global_urlUsuario,
+            "columns": [
+                { "data": "id" },
+                { "data": "imagen" },
+                { "data": "nombre" },
+                { "data": "correo" },
+                { "data": "tipo" },
+                { "data": "fecha" },
+                { "data": "version" }
+            ],
+            "iDisplayStart": parseInt(startTable),
+            "iDisplayLength": parseInt(length),
+            "oSearch": {"sSearch": userGlobal},
+            "columnDefs": [ { 
+                        "targets": 6, 
+                        "orderable": false 
+            } ],
+            "order": [ 0, "desc" ],
+            responsive: true,
+            "dom": 'T<"clear">lfrtip',
+            "tableTools": {
+                "sSwfPath": "<?php echo $this->basePath()?>/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf",
+                "aButtons": ["copy","csv", "pdf"],
+            },
+            "fnServerParams": function (aoData) { 
+                aoData.push({ "name": 'page', "value": $('#personal').DataTable().page.info().page });
+                aoData.push({ "name": 'radio', "value": radio });
+            },
+            "oLanguage": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior",
+                    },
+                    "fnInfoCallback": null,
+            },
+            "fnDrawCallback": function( oSettings ) {
+                $('[data-toggle="tooltip"]').tooltip({ html:true });
+
+                // -------------------------------------------------
+                // LAZY LOAD DE LAS IMAGENES
+                $("img.lazy").lazyload({
+                    effect: "fadeIn"
+                });
+
+                // -------------------------------------------------
+                // POPUP DE LAS IMAGENES EN LA TABLA
+                $('.image-single-popup').magnificPopup({
+                    type: 'image',
+                    fixedContentPos: true,
+                    image: {
+                        verticalFit: true,
+                        tError: 'No se encontro ninguna imagen.',
+                    },
+                    zoom: {
+                        enabled: true,
+                        duration: 300 // don't foget to change the duration also in CSS
+                    }
+                }); 
+
+
+            }
+        });
+    }
+
+
+    $(document).ready(function(){
+        $('#alertaMSJ').delay(2500).slideToggle(2500);
+
+        
+        loadDataTablaUsuario('');
+        global_isLoadTablaUsuario = true;
+        if( $("#filtro_radio")[0] ){
+            $("#filtro_radio").on('change', function(){
+                loadDataTablaUsuario( $(this).val() );
+            });
+        }
+        
+
+        //========================================================================
+        //deshabilita-habilita EL USUARIO
+        $('#personal').on('click', '.linkStatus',function () {
+            var id=$(this).attr('data');
+            $("#personal #row_"+id).addClass("danger");
+
+            var text="Estas seguro de deshabilitar a este usuario";
+            var confirmButtonText="Si, Deshabilitar";
+            var confirmButtonColor="#DD6B55";
+            var title='¿Deshabilitar?';
+            var titleExito="Deshabilitado!";
+            if($(this).attr('data-status')=='deshabilitado'){
+                text="Estas seguro de habilitar a este usuario";
+                confirmButtonText="Si, Habilitar";
+                confirmButtonColor="#1ab394";
+                title='¿Habilitar?';
+                titleExito="Habilitado!";
+            }
+            swal({
+                title: title,
+                text: text,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: confirmButtonColor,
+                confirmButtonText: confirmButtonText,
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.post( '<?php echo $this->url("usuarioChangeStatus") ?>', { id: id }, function( data ) {
+                        if (data.status=="ok") {
+
+                            swal(titleExito, data.msj, "success");
+                            setTimeout(function(){
+                                $('#personal').DataTable().draw(false);
+                            }, 1000);
+                            clearClassRow();
+                        }
+                        else{
+                            swal("Error", data.msj, "error");
+                        }
+                        
+
+                    }, "json").fail(function(){
+                        console.log('Error en el server');
+                        swal("Error", 'Error en el servidor (contacte a su administrador).', "error");
+                    });
+                }else{
+                    clearClassRow();
+                }
+                
+            });
+        });
+        //========================================================================
+
+
+        //========================================================================
+        //elimina EL USUARIO
+        $('#personal').on('click', '.linkEliminar',function () {
+            var id=$(this).attr('data');
+            $("#personal #row_"+id).addClass("danger");
+
+            var text="Estas seguro de eliminar a este usuario";
+            var confirmButtonText="Si, Eliminar";
+            var confirmButtonColor="#DD6B55";
+            var title='¿Eliminar?';
+            var titleExito="Eliminado!";
+            swal({
+                title: title,
+                text: text,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: confirmButtonColor,
+                confirmButtonText: confirmButtonText,
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.post( '<?php echo $this->url("eliminaradm") ?>', { id: id }, function( data ) {
+                        if (data.status=="ok") {
+
+                            swal(titleExito, data.msj, "success");
+                            setTimeout(function(){
+                                $('#personal').DataTable().draw(false);
+                            }, 1000);
+                            clearClassRow();
+                        }
+                        else{
+                            swal("Error", data.msj, "error");
+                        }
+                        
+
+                    }, "json").fail(function(){
+                        console.log('Error en el server');
+                        swal("Error", 'Error en el servidor (contacte a su administrador).', "error");
+                    });
+                }else{
+                    clearClassRow();
+                }
+                
+            });
+        });
+        //========================================================================
+
+
+    });
+
+</script>

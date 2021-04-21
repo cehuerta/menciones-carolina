@@ -1,0 +1,523 @@
+<?php 
+	if (defined('RUNNING_FROM_ROOT')) {
+        $this->plugin('basePath')->setBasePath($this->basePath().'/public');
+    }       
+?>
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+
+		$('#alertaMSJ').delay(2500).slideToggle(2500);
+
+
+	});
+
+    function selectInCombo(combo,val)
+    {
+        for(var indice=0 ;indice<document.getElementById(combo).length;indice++)
+        {
+            if (document.getElementById(combo).options[indice].value==val ){
+                document.getElementById(combo).selectedIndex =indice;
+            }
+        }
+    }
+</script>
+
+<?php
+    $flash=$this->flashMessenger()
+            ->setMessageOpenFormat('<div%s id="alertaMSJ"><strong>')
+            ->setMessageSeparatorString('')
+            ->setMessageCloseString('</strong></div>');
+?>
+<?php echo $flash->render('msjError',array('alert', 'alert-danger'));?>
+
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">USUARIOS</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<ol class="breadcrumb">
+    <li><a href="<?=$this->url("adms").$this->queryGET; ?>">Usuarios</a></li>
+    <li>Editar - <?php echo $this->escapeHTML(stripslashes($usuario["nombre_completo"])) ?></li>
+    <a class="btn btn-default btn-sm pull-right" href="<?=$this->url("adms").$this->queryGET; ?>"><i class="fa fa-arrow-left"></i> Volver</a>
+</ol>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+    <div class="panel">
+        <div class="panel-heading">
+            <div class="panel-control">
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#profile-tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-user"></i> Perfil</a></li>
+                    <li class=""><a href="#settings-tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-cog"></i> Editar</a></li>
+                </ul>
+
+            </div>
+            <h3 class="panel-title">Perfil</h3>
+
+        </div>
+
+        <!-- ICON CARGANDO -->
+        <div class="panel-alert">
+            <div id="imgCargando" class="alert-wrap in"></div>
+        </div>
+        <!-- /.FIN ICON CARGANDO -->
+
+        <div class="panel-body">
+
+            <!-- END NAV TABS -->
+            <div class="tab-content">
+                <!-- PROFILE TAB CONTENT -->
+                <div class="tab-pane active in fade" id="profile-tab">
+
+                    <div class="row">
+                        <div class="col-md-3 bord-rgt">
+                            
+                            <br />
+                            <div class="ibox float-e-margins">
+                                <div>
+                                    <div style="border-style:none;" class=" ibox-content no-padding border-left-right">
+
+                                        <!-- imagen segun el tipo de usuario -->
+                                        <?php if(empty($usuario["logo"])): ?>
+                                            <img style="margin: 0px auto;" src="<?php echo $this->basePath().'/img/'.$this->imgNoImage; ?>" class="img-responsive img-rounded" alt="Imagen de Perfil" />
+                                        <?php else: ?>
+                                            <img style="margin: 0px auto;" src="<?php echo $this->rutaUser.'/'.$usuario["slug"].'/'.$usuario["logo"]; ?>" class="img-responsive img-rounded" alt="Imagen de Perfil" />
+                                        <?php endif; ?>
+                                        
+                                    </div>
+                                    <div class="ibox-content profile-content">
+                                        <h4 class="text-center"><strong ><?php echo $this->escapeHTML(stripslashes($usuario["nombre_completo"])) ?></strong></h4>
+                                        
+                                        <div class="user-button">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-offset-3">
+                                                    <a href="javascript:void(0)" id="openModalCorreo" class="btn btn-primary "><i class="fa fa-envelope-o"></i> Enviar Correo</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--/fin col 3-->
+                        <div class="col-md-9">
+
+                            <br />
+                            <div class="user-info-right">
+                                <div class="basic-info">
+                                    <h3><i class="fa fa-list-alt"></i> Información Básica</h3>
+                                    
+                                    <dl class="dl-horizontal">
+
+                                        <dt>Nombre:</dt> <dd><?php echo $this->escapeHTML(stripslashes($usuario["nombre_completo"])) ?></dd>
+                                        <dt>Tipo:</dt> <dd><?php echo $usuario["name_profile"] ?></dd>
+                                        <dt>Slug:</dt> <dd><?php echo $usuario["slug"] ?></dd>
+                                        <dt>Fecha de registro:</dt> <dd><?php echo $usuario["fecha_registro_user"] ?></dd>
+
+                                    </dl>
+                                </div>
+
+                                <div class="contact_info">
+                                    <h3><i class="fa fa-phone"></i> Información de contacto</h3>
+                                    <dl class="dl-horizontal">
+                                        <dt>Correo:</dt> <dd><?php echo $this->escapeHTML(stripslashes($usuario["correo"])) ?></dd>
+                                    </dl>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- END PROFILE TAB CONTENT -->
+
+
+                <!-- SETTINGS TAB CONTENT -->
+                <div class="tab-pane fade" id="settings-tab">
+                    <form name="guardarUsuario" id="guardarUsuario" method="POST" >
+
+                        <div class="row">
+                            <div class="col-md-5 border-right">
+
+                                <br />
+                                <div class="form-group">
+                                    <label class="text-semibold">Nombre completo <span class="label-required">*</span></label>
+                                    <input type="text" maxlength="200" name="nombreUsuario" id="nombreUsuario" value="<?=$this->escapeHTML(stripslashes($usuario['nombre_completo']))?>" class="form-control" required />
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="text-semibold">Slug </label>
+                                    <input type="text" disabled maxlength="200" name="slugUser" id="slugUser" value="<?=$usuario['slug']?>" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-semibold">Correo <span class="label-required">*</span></label>
+                                    <input type="email" maxlength="200" name="correoUsuario" id="correoUsuario" value="<?=$this->escapeHTML(stripslashes($usuario['correo']))?>" class="form-control" required />
+                                </div>
+                                
+
+                                <div class="form-group">
+                                    <label class="text-semibold">Contraseña <em>(Ingrese solo si desea cambiar la contraseña)</em></label>
+                                    <input type="password" maxlength="100" name="passUsuario" id="passUsuario" class="form-control" />
+                                </div>
+                        
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label class="text-semibold">Imagen <span class="label-required">*</span> </label>
+                                            <input type="file" name="image" id="image" accept=".jpg, .png, .jpeg" class="form-control" required />
+                                            <em>.png, .jpg, .jpeg</em>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-4 text-center pad-top">
+                                        <?php if( !empty($usuario['logo']) ): ?>
+                                            <img src="<?php echo $this->rutaUser.'/'.$usuario['slug'].'/'.$usuario['logo']; ?>" alt="Preview" class="img-circle img-md img-preview">
+                                        <?php else: ?>
+                                            <img src="<?php echo $this->basePath().'/img/'.$this->NoImage; ?>" alt="Preview" class="img-circle img-md img-preview">
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="text-semibold">Tipo de usuario <span class="label-required">*</span></label>
+                                    <select name="tipo" id="tipo" class="form-control blanco" required>
+                                        <option value="">Seleccione...</option>
+                                        <?php 
+                                            foreach ($this->profiles as $value) {
+                                                echo '<option value="'.$value["idprof"].'">'.$value["name_profile"].'</option>';
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                                <?php echo "<script>selectInCombo('tipo', ".$usuario["tipo_user"].")</script>"; ?>
+                            </div>
+                            
+                            
+
+                            <div class="col-md-12">
+                                <br />
+                                <button class="btn btn-primary btn-sm" id="btnGuardar" data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando"><i class="fa fa-floppy-o"></i> Guardar</button>  
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+                <!-- END SETTINGS TAB CONTENT -->
+                
+                
+            </div>
+
+            
+        </div>
+    </div>
+    <!-- /main-content -->
+</div>
+<!--===================================================-->
+<!--End page content-->
+
+
+
+<!-- Modal -->
+<div id="myModalCorreo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" id="formMail" name="formMail" enctype="multipart/form-data">
+
+        
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Enviar Correo</h4>
+            </div>
+            
+
+            <!-- ICON CARGANDO -->
+            <div class="panel-alert">
+                <div id="msjModal" class="alert-wrap in"></div>
+            </div>
+            <!-- /.FIN ICON CARGANDO -->
+
+
+            <div class="modal-body" >
+                <div class="table-responsive">
+                    
+                        <div class="form-group">
+                            <label>Asunto</label>
+                            <input type="text" placeholder="Asunto" name="asunto" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Contenido</label>
+                            <textarea name="contenido" id="contenido" class="form-control" cols="30" rows="10"></textarea>
+                        </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button class="btn btn-primary" id="btnSend" data-loading-text="<i class='fa fa-spinner fa-pulse fa-fw'></i> Guardando" ><span class='glyphicon glyphicon-send'></span> Enviar</button>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>
+
+<?php 
+    echo $this->inlineScript()->prependFile($this->basePath('js/handlebars-v3.0.0.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/additional-methods.min.js'))
+                                ->prependFile($this->basePath('plugins/jquery-validation/jquery.validate.min.js'))
+                                ->prependFile($this->basePath('js/redactor.js'))
+                                ->prependFile($this->basePath('/plugins/bootstrap-select/ajax-bootstrap-select.min.js'))
+                                ; 
+?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->basePath();?>/css/redactor.css">
+
+<link rel="stylesheet" href="<?php echo $this->basePath()?>/plugins/bootstrap-select/ajax-bootstrap-select.min.css">
+
+<script type="text/javascript">
+    
+
+    // *****************************************************
+    //VAR GLOBALES
+    var global_usuario='<?php echo $usuario["id_user"]; ?>';
+    var global_noImage='<?php echo $this->basePath()."/img/".$this->imgNoImage; ?>';
+
+    function sendData(url, formData, sendAction, cargando, $btn)
+    {
+        var source   = $("#alert-template").html();
+        var template = Handlebars.compile(source);
+    
+        $.ajax({
+            url: url, 
+            dataType: "json",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                cargando.html('<i style="width:100%; text-align:center;" class="fa fa-spinner fa-pulse fa-spin fa-3x"></i>');
+                $btn.button('loading');
+            },
+            success: function(data){
+                $btn.button('reset');
+
+                if(data.status=='ok'){
+                    var context = {msj: data.msj, tipo: "alert-success" };
+                    cargando.html(template(context));
+                    
+
+                    setTimeout(function(){
+                        if(sendAction=='editar'){
+                            location.reload();
+                        }
+                        else{
+                            $("#myModalCorreo").modal("hide");
+                            cargando.empty();
+                            $("#myModalCorreo #formMail input").val('');
+                            $("#myModalCorreo #formMail .redactor_editor").empty();
+                        }
+                    },800);
+                }
+                else{
+                    var context = {msj: data.msj, tipo: "alert-danger" };
+                    cargando.html(template(context));
+                }
+            },
+            error: function(){
+                $btn.button('reset');
+                var context = {msj: "Ocurrio un error procesando los datos...", tipo: "alert-danger" };
+                cargando.html(template(context));
+            }
+                    
+        });
+    }
+
+
+    function loadDataTable(table){
+        table.dataTable({
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": '<?php echo $this->url("tablausuarios"); ?>',
+            "columns": [
+                { "data": "id" },
+                { "data": "imagen" },
+                { "data": "nombre" },
+                { "data": "correo" },
+                { "data": "fecha" },
+                { "data": "version" }
+            ],
+            "columnDefs": [ { 
+                        "targets": 5, 
+                        "orderable": false 
+            } ],
+            "order": [ 0, "desc" ],
+            responsive: true,
+            "dom": 'T<"clear">lfrtip',
+            "tableTools": {
+                "sSwfPath": "<?php echo $this->basePath()?>/js/plugins/dataTables/swf/copy_csv_xls_pdf.swf"
+            },
+            "fnServerParams": function (aoData) { 
+                aoData.push({ "name": 'user', "value": '<?php echo $usuario["id_user"] ?>' });
+            },
+            "oLanguage": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior",
+                    },
+                    "fnInfoCallback": null,
+            },
+            "fnDrawCallback": function( oSettings ) {
+                $('[data-toggle="tooltip"]').tooltip({ html:true });
+
+                $("img.lazy").lazyload({
+                    effect: "fadeIn"
+                });
+            }
+        });
+    }
+
+
+    $(document).ready(function(){
+
+        //contenido del mail
+        $('#contenido').redactor({
+            focus: false,
+            buttonSource: true,
+            minHeight: 250,
+            maxHeight: 300,
+            dragImageUpload: false,
+            imageLink: false
+        });
+
+
+        $("#openModalCorreo").on('click', function(){
+            $("#myModalCorreo").modal('show');
+        });
+
+
+        var optionRules={
+                image: {
+                  required: false,
+                  extension: "jpg|png|jpeg"
+                }
+            };
+        var messagesRules={
+                nombreUsuario: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 200 caracteres."
+                },
+                slugUser: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 200 caracteres."
+                },
+                correoUsuario: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 200 caracteres.",
+                    email:"Debe ingresar un correo válido."
+                },
+                passUsuario: {
+                    required: "Este campo es requerido.",
+                    minlength:"Debe ingresar al menos 3 caracteres.",
+                    maxlength:"Debe ingresar menos de 100 caracteres.",
+                },
+                image:{
+                    required: "Este campo es requerido.",
+                    accept: "Debe ingresar solo imagenes en formato [jpg, png, jpeg]",
+                },
+                image:{
+                    required: "Este campo es requerido.",
+                    accept: "Debe ingresar solo imagenes en formato [jpg, png, jpeg]",
+                },
+                tipo:{
+                    required: "Este campo es requerido.",
+                }
+            };
+
+        $("#guardarUsuario").validate({
+            rules: optionRules,
+            messages: messagesRules,
+            highlight: function(element, errorClass){ 
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(element, errorClass){ 
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function(form){
+                var formData = new FormData( $("#guardarUsuario")[0] );
+                formData.append('user', '<?php echo (int)$usuario["id_user"] ?>' );
+                var $btn=$("#btnGuardar");
+                sendData('<?php echo $this->url("saveeditarajax") ?>', formData, 'editar', $("#imgCargando"), $btn );
+            }
+        });
+        
+        $("#formMail").validate({
+            errorPlacement: function(){ return false; },
+            highlight: function(element, errorClass){ 
+                $(element).closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function(element, errorClass){ 
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function(form){
+                var formData = new FormData();
+                formData.append('asunto', form.asunto.value );
+                formData.append('contenido', form.contenido.value );
+                formData.append('user', '<?php echo (int)$usuario["id_user"] ?>' );
+
+                var $btn=$("#btnSend");
+                sendData('<?php echo $this->url("viewsendmail") ?>', formData, 'mail', $("#myModalCorreo #msjModal"), $btn );
+
+            }
+        });
+
+
+        //MUESTRA UN PRVIEW DE LA IMAGEN CARGADA
+        $(document).on('change', '#image', function(e){
+            var $img=$('.img-preview');
+            if( $(this).val()!="" ){
+                var reader = new FileReader();
+                reader.onload = function(event){
+                    $img.attr('src',event.target.result)
+                        .fadeIn();
+                }
+                reader.readAsDataURL(e.target.files[0]); 
+            }
+            else{
+                $img.attr('src',global_noImage)
+                    .fadeIn();
+            }
+        });
+
+    });
+</script>

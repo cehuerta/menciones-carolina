@@ -1,0 +1,84 @@
+<?php echo $this->doctype(); ?>
+
+
+<html lang="en" class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle("LOGIN")->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+        <meta name="description" content="Dashboard">
+        <meta name="author" content="RAtiboo">
+
+        <!-- Le styles -->
+        <?php $r=mt_rand(1,50); ?>
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath().'/img/logo/logo.png?r='.$r ))
+                        ->prependStylesheet($this->basePath() . '/plugins/pace/pace.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/demo/nifty-demo.min.css')
+                        ->prependStylesheet($this->basePath() . '/plugins/font-awesome/css/font-awesome.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/themes/type-c/theme-dark.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/nifty.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+                        ->prependStylesheet('http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin')
+                        ; ?>
+                         
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath() . '/js/demo/bg-images.js')
+            ->prependFile($this->basePath() . '/js/nifty.min.js')
+            ->prependFile($this->basePath() . '/plugins/fast-click/fastclick.min.js')
+            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+            ->prependFile($this->basePath() . '/js/jquery-2.1.1.min.js')
+            ->prependFile($this->basePath() . '/plugins/pace/pace.min.js')
+        ; ?>
+        
+
+    </head>
+
+    <body>
+        
+        <div id="container" class="cls-container">
+
+            <!-- BACKGROUND IMAGE -->
+            <!--===================================================-->
+            <div id="bg-overlay" class="bg-img img-balloon"></div>
+
+            <!-- HEADER -->
+            <!--===================================================-->
+            <div class="cls-header cls-header-lg">
+                <div class="cls-brand">
+                    <a class="box-inline" href="">
+                        <!-- <img alt="Nifty Admin" src="" style="" class="brand-icon img-responsive"> -->
+                        <span class="brand-title">ADMINISTRADOR DE MENCIONES<span class="text-thin"></span></span>
+                    </a>
+                </div>
+            </div>
+            <!--===================================================-->
+
+            <?php echo $this->content; ?>
+
+            <!-- DEMO PURPOSE ONLY -->
+            <!--===================================================-->
+            <div class="demo-bg">
+                <div id="demo-bg-list">
+                    <div class="demo-loading"><i class="fa fa-refresh"></i></div>
+                    <img class="demo-chg-bg bg-trans" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-trns.jpg" alt="Background Image">
+                    <img class="demo-chg-bg" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-1.jpg" alt="Background Image">
+                    <img class="demo-chg-bg active" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-2.jpg" alt="Background Image">
+                    <img class="demo-chg-bg" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-3.jpg" alt="Background Image">
+                    <img class="demo-chg-bg" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-4.jpg" alt="Background Image">
+                    <img class="demo-chg-bg" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-5.jpg" alt="Background Image">
+                    <img class="demo-chg-bg" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-6.jpg" alt="Background Image">
+                    <img class="demo-chg-bg" src="<?php echo $this->basePath();?>/img/bg-img/thumbs/bg-img-7.jpg" alt="Background Image">
+                </div>
+            </div>
+            <!--===================================================-->
+
+
+        </div>
+        
+    </body>
+</html>
